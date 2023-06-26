@@ -29,7 +29,7 @@ typedef enum
     ISO15765_29bit_250K
 }protocol;
 
-
+int a = 10;
 
 typedef struct 
 {
