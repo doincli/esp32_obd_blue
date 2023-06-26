@@ -30,3 +30,10 @@ void OBD_twai_deinit(void)
     ESP_ERROR_CHECK(twai_stop());
     ESP_ERROR_CHECK(twai_driver_uninstall());
 }
+
+
+void config_struct(detect_config_t *t_config){
+    t_config->protocol_t = ISO15765_11bit;
+    t_config->speed = BPS_500K;
+    t_config->statu = ISO15765_11bit_500K;
+}

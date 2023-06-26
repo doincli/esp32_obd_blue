@@ -39,7 +39,7 @@ typedef struct
     //uint32_t   msg_id;   //11 bit standard format ID
 }detect_config_t;
 
-
+void config_struct(detect_config_t *t_config);
 
 void OBD_twai_init(detect_config_t *t_config);
 
