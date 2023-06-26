@@ -19,6 +19,9 @@
 #define MSG_ID 0x7DF
 #define MSG_ID_EXP 0x18DB33F1 
 
+//CAN io的数量
+#define FIRST 1
+#define SECOND 2
 
 
 typedef enum 
@@ -29,7 +32,7 @@ typedef enum
     ISO15765_29bit_250K
 }protocol;
 
-int a = 10;
+
 
 typedef struct 
 {
@@ -39,11 +42,13 @@ typedef struct
     //uint32_t   msg_id;   //11 bit standard format ID
 }detect_config_t;
 
-void config_struct(detect_config_t *t_config);
 
-void OBD_twai_init(detect_config_t *t_config);
+
+void config_detect(detect_config_t *t_config);
+
+void OBD_twai_init(detect_config_t *t_config,int can_num);
 
 void OBD_twai_deinit(void);
 
-
+void config_io(int rx_port,int tx_port,int can_num);
 #endif // FUNC_H

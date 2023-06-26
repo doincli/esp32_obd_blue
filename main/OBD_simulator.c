@@ -102,7 +102,7 @@ void Task_detectpro(detect_config_t *t_config){
             case ISO15765_11bit_500K:
                 printf("ISO15765_11bit_500K start\n");
                 //配置这个协议得TWAI总线
-                OBD_twai_init(t_config);
+                OBD_twai_init(t_config,FIRST);
                 //获取车速，获取失败则进入下一个协议继续探测，剩下同理
                     right_protocol = detect_get_protocol(t_config);
                 if (!right_protocol)
@@ -123,7 +123,7 @@ void Task_detectpro(detect_config_t *t_config){
             case ISO15765_11bit_250K:
                 printf("ISO15765_11bit_250K start\n");
                 
-                OBD_twai_init(t_config);
+                OBD_twai_init(t_config,FIRST);
                 right_protocol = detect_get_protocol(t_config);
                 if (!right_protocol)
                 {
@@ -142,7 +142,7 @@ void Task_detectpro(detect_config_t *t_config){
             case ISO15765_29bit_500K:
                 printf("ISO15765_29bit_500K start\n");
                 //t_config.speed_config = (twai_timing_config_t)TWAI_TIMING_CONFIG_250KBITS();
-                OBD_twai_init(t_config);
+                OBD_twai_init(t_config,FIRST);
                 right_protocol = detect_get_protocol(t_config);
                 if (!right_protocol)
                 {
@@ -161,7 +161,7 @@ void Task_detectpro(detect_config_t *t_config){
             case ISO15765_29bit_250K:
                 printf("ISO15765_29bit_250K start\n");
                 //t_config.speed_config = (twai_timing_config_t)TWAI_TIMING_CONFIG_500KBITS();
-                OBD_twai_init(t_config);
+                OBD_twai_init(t_config,FIRST);
                 right_protocol = detect_get_protocol(t_config);
                 if (!right_protocol)
                 {
@@ -186,7 +186,7 @@ void Task_detectpro(detect_config_t *t_config){
             i++;
             if (i >2)
             {
-                OBD_twai_init(t_config);
+                OBD_twai_init(t_config,FIRST);
                 break;
             }
             
