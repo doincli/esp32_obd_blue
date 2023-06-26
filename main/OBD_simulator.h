@@ -30,7 +30,7 @@ bool detect_get_protocol(detect_config_t *t_config);
 //自动匹配正确的协议
 void Task_detectpro(detect_config_t *t_config);
 
-
+//获取速度
 uint32_t OBD_get_engine_speed_val_protocol(detect_config_t *t_config);
 
 

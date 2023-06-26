@@ -43,7 +43,6 @@ void config_struct(detect_config_t *t_config);
 
 void OBD_twai_init(detect_config_t *t_config);
 
-
 void OBD_twai_deinit(void);
 
 

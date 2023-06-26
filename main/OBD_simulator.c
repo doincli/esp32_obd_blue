@@ -186,6 +186,7 @@ void Task_detectpro(detect_config_t *t_config){
             i++;
             if (i >2)
             {
+                OBD_twai_init(t_config);
                 break;
             }
             
