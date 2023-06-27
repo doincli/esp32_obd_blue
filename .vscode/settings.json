@@ -1,10 +1,14 @@
 {
     "idf.adapterTargetName": "esp32c3",
-    "C_Cpp.errorSquiggles": "disabled",
+    "C_Cpp.errorSquiggles": "enabled",
     "files.associations": {
         "fun.h": "c",
-        "obd_simulator.h": "c"
+        "obd_simulator.h": "c",
+        "esp_err.h": "c",
+        "assert.h": "c",
+        "esp_compiler.h": "c"
     },
     "idf.flashType": "UART",
-    "idf.port": "/dev/ttyUSB0"
+    "idf.port": "/dev/ttyUSB0",
+    "C_Cpp.default.compilerPath": "/home/liboyu/.espressif/tools/riscv32-esp-elf/esp-2022r1-11.2.0/riscv32-esp-elf/bin/riscv32-esp-elf-gcc"
 }

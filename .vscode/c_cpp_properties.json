@@ -4,16 +4,13 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
-                "/home/liboyu/esp-idf/components/driver/twai/include",
-                "/home/liboyu/esp-idf/**",
-                "/home/liboyu/esp-idf/components/freertos/config/include/freertos"
+                "/home/liboyu/esp/esp-idf/components/**"
             ],
             "defines": [],
-            "compilerPath": "/usr/bin/clang-14",
-            "cStandard": "c17",
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "c11",
             "cppStandard": "c++14",
-            "intelliSenseMode": "linux-clang-x64",
-            "compileCommands": "${workspaceFolder}/build/compile_commands.json"
+            "intelliSenseMode": "linux-gcc-x64"
         }
     ],
     "version": 4
