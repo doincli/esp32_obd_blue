@@ -11,8 +11,8 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#ifndef OBD_SIMULATOR_H
-#define OBD_SIMULATOR_H
+#ifndef OBD_DETECT_H
+#define OBD_DETECT_H
 
 #include <stddef.h>
 #include "esp_err.h"
@@ -33,12 +33,6 @@
 #define MSG_ID 0x7DF            /*!< MSG_ID the head of message of protocol   */
 #define MSG_ID_EXP 0x18DB33F1 
 
-// //CAN io的数量
-// #define FIRST 1         
-// #define SECOND 2
-
-
-#define MAX_NUM_CAN 3
 
 typedef enum 
 {
@@ -53,113 +47,106 @@ typedef struct
 {
     uint8_t  tx_port;            /*!< IO port */
     uint8_t  rx_port;
-}OBD_IO;
+}obd_io;
 
-typedef OBD_IO * OBD_IO_Handle;
+typedef obd_io * obd_io_handle;
 
 typedef struct 
 {
     uint8_t    protocol_t;          /*!< protocol can be defined as  ISO15765_11bit and ISO15765_29bit */
     uint8_t    statu ;              /*!< current search mode */
     uint8_t    speed ;              /*!< speed can be defined as  BPS_500K and BPS_250K */
-    OBD_IO_Handle io_port;
+    obd_io_handle io_port;
     twai_general_config_t * g_config;
     twai_timing_config_t *  t_config;
 }detect_config_t;
 
-typedef detect_config_t* OBD_protocol_Handle;
+typedef detect_config_t* obd_protocol_handle;
 
 
 /**
-  * @brief  Get the address of this ID bus
-  *
-  * @param  Can_num  the id of can
-  *
-  * @return
-  *     the bus address of the  can id 
+  * @brief  create a can bus handle
+  * 
+  * @return  the handle of can bus
+  *     
   */
-OBD_protocol_Handle handle_init(uint8_t Can_num);
+obd_protocol_handle obd_create();
 
 /**
-  * @brief  Initialize the bus configuration for an ID
-  *
-  * @param  Can_num  the id of can bus
+  * @brief  obd detection init
+  * 
+  * @param  obd_handle  can bus handle
+  * @param  tx_port     the number of tx port
+  * @param  rx_port     the number of rx port
   * 
   * @return
   *     - ESP_OK: succeed
   *     - others: fail
   */
-esp_err_t OBD_protocol_init(uint8_t Can_num);
+esp_err_t obd_init(obd_protocol_handle obd_handle,uint8_t tx_port,uint8_t rx_port);
 
 /**
-  * @brief  open the bus configuration for an ID
-  *
-  * @param  Can_num  the id of can bus
-  * @param  protocol_status the struct address of  bus id
+  * @brief  get the speed of obd
+  * 
+  * @param  obd_handle  can bus handle
+  * 
+  * @return the speed of obd
+  * 
+  */
+uint32_t obd_get_engine_speed_val(obd_protocol_handle protocol_status );
+
+/**
+  * @brief  delete the handle
+  * 
+  * @param  obd_handle  can bus handle
   * 
   * @return
   *     - ESP_OK: succeed
   *     - others: fail
   */
-esp_err_t OBD_twai_init(OBD_protocol_Handle protocol_status,uint8_t Can_num);
+esp_err_t obd_delete(obd_protocol_handle obd_handle);
+
 
 /**
-  * @brief  close the bus configuration for an ID
+  * @brief  close the bus configuration  
   * 
   * @return
   *     - ESP_OK: succeed
   *     - others: fail
   */
-esp_err_t OBD_twai_deinit();
+esp_err_t obd_twai_deinit();
 
 /**
-  * @brief  IO init
-  *
-  * @param  tx_port  the num of tx_port
-  * @param  rx_port  the num of rx_port
-  * @param  Can_num  the id of can bus
+  * @brief  modifed the bus configuration 
+  * 
+  * @param  obd_handle  can bus handle
   * 
   * @return
   *     - ESP_OK: succeed
   *     - others: fail
   */
-esp_err_t io_init(uint8_t tx_port,uint8_t rx_port,uint8_t Can_num);
+esp_err_t obd_twai_modifed(obd_protocol_handle obd_handle);
 
 /**
-  * @brief  Check whether the agreement at this time is correct
-  *
-  * @param  Can_num  the id of can bus
-  * @param  protocol_status the struct address of  bus id
+  * @brief  detect the protocol is right
+  * 
+  * @param  obd_handle  can bus handle
   * 
   * @return
   *     - ESP_OK: succeed
   *     - others: fail
   */
-esp_err_t detect_get_protocol(OBD_protocol_Handle protocol_status, uint8_t Can_num);
+esp_err_t obd_detect(obd_protocol_handle obd_handle);
 
 /**
-  * @brief  Automatically match the correct protocol
-  *
-  * @param  Can_num  the id of can bus
-  * @param  protocol_status the struct address of  bus id
+  * @brief  auto match the right protocol
+  * 
+  * @param  obd_handle  can bus handle
   * 
   * @return
   *     - ESP_OK: succeed
   *     - others: fail
   */
-esp_err_t Task_detectpro(OBD_protocol_Handle protocol_status , uint8_t Can_num);
+esp_err_t obd_detect_match(obd_protocol_handle obd_handle);
 
-/**
-  * @brief  get speed of obd
-  *
-  * @param  Can_num  the id of can bus
-  * @param  protocol_status the struct address of  bus id
-  * 
-  * @return
-  *     - ESP_OK: succeed
-  *     - others: fail
-  */
-uint32_t OBD_get_engine_speed_val_protocol(OBD_protocol_Handle protocol_status , uint8_t Can_num);
-
-
-#endif // OBD_SIMULATOR_H
+#endif // OBD_DETECT_H
