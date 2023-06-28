@@ -863,7 +863,7 @@
 			"path" : "build/CMakeFiles/git-data/grabRef.cmake"
 		},
 		{
-			"path" : ".git/refs/heads/v6"
+			"path" : ".git/refs/heads/v2"
 		},
 		{
 			"isExternal" : true,

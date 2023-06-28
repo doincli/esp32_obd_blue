@@ -1,4 +1,4 @@
-# OBD_detect驱动说明
+# OBD_detect组件说明
 
 ## 公共参数说明：
 
@@ -71,16 +71,10 @@ typedef detect_config_t* obd_protocol_handle;
 
 ## 函数说明：
 
-1.表示创造一个can总线句柄由于接下来的OBD检测操作
+1.表示创造一个can总线句柄由于接下来的OBD检测操作,OBD初始化，绑定输出引脚以及基础的通信协议初始化
 
 ```c
-obd_protocol_handle obd_create();
-```
-
-2.OBD初始化，绑定输出引脚以及基础的通信协议初始化
-
-```c
-esp_err_t obd_init(obd_protocol_handle obd_handle,uint8_t tx_port,uint8_t rx_port);
+obd_protocol_handle obd_create(uint8_t TX_GPIO_NUM,uint8_t RX_GPIO_NUM);
 ```
 
 3.获取OBD模拟器的车速
@@ -126,9 +120,8 @@ esp_err_t obd_detect_match(obd_protocol_handle obd_handle);
 总体分为4步
 
 1. obd_create 创造一个操作句柄
-2. obd_init  进行初始化
-3. obd_get_engine_speed_val 获得车速信息
-4. obd_delete  删除句柄
+2. obd_get_engine_speed_val 获得车速信息
+3. obd_delete  删除句柄
 
 ```c
 #include <stdio.h>
@@ -144,10 +137,7 @@ esp_err_t obd_detect_match(obd_protocol_handle obd_handle);
 
 void app_main(void)
 {   
-    obd_protocol_handle protocol_status = obd_create();
-
-    obd_init(protocol_status,TX_GPIO_NUM,RX_GPIO_NUM);
-  
+    obd_protocol_handle protocol_status = obd_create(TX_GPIO_NUM,RX_GPIO_NUM);
 
     for (int i = 0; i < 10; i++)
     {
