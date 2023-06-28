@@ -64,26 +64,19 @@ typedef struct
 typedef detect_config_t* obd_protocol_handle;
 
 
-/**
-  * @brief  create a can bus handle
-  * 
-  * @return  the handle of can bus
-  *     
-  */
-obd_protocol_handle obd_create();
+
 
 /**
-  * @brief  obd detection init
+  * @brief  breate a obd struct and init ,can match the right protocol
   * 
   * @param  obd_handle  can bus handle
   * @param  tx_port     the number of tx port
   * @param  rx_port     the number of rx port
   * 
-  * @return
-  *     - ESP_OK: succeed
-  *     - others: fail
+  * @return can bus handle
+  *  
   */
-esp_err_t obd_init(obd_protocol_handle obd_handle,uint8_t tx_port,uint8_t rx_port);
+obd_protocol_handle obd_create(uint8_t tx_port,uint8_t rx_port);
 
 /**
   * @brief  get the speed of obd

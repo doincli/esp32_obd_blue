@@ -16,14 +16,11 @@
 
 static const twai_filter_config_t f_config = TWAI_FILTER_CONFIG_ACCEPT_ALL();
 
-obd_protocol_handle obd_create(){
-        obd_protocol_handle protocol_t = malloc(sizeof(obd_protocol_handle));
-        return protocol_t;
-}
 
-esp_err_t obd_init(obd_protocol_handle obd_handle,uint8_t tx_port,uint8_t rx_port){
+obd_protocol_handle obd_create(uint8_t tx_port,uint8_t rx_port){
 
     //malloc memory
+    obd_protocol_handle obd_handle = malloc(sizeof(obd_protocol_handle));
     obd_handle->io_port =  malloc(sizeof(obd_io));
     obd_handle->g_config = malloc(sizeof(twai_general_config_t));
     obd_handle->t_config = malloc(sizeof(twai_timing_config_t));
@@ -53,7 +50,7 @@ esp_err_t obd_init(obd_protocol_handle obd_handle,uint8_t tx_port,uint8_t rx_por
     //match protocol
     obd_detect_match(obd_handle);
 
-    return ESP_OK; 
+    return obd_handle; 
 }
 
 uint32_t obd_get_engine_speed_val(obd_protocol_handle obd_handle)

@@ -17,9 +17,9 @@
 
 void app_main(void)
 {   
-    obd_protocol_handle protocol_status = obd_create();
+    
 
-    obd_init(protocol_status,TX_GPIO_NUM,RX_GPIO_NUM);
+    obd_protocol_handle protocol_status = obd_create(TX_GPIO_NUM,RX_GPIO_NUM);
   
 
     for (int i = 0; i < 10; i++)
