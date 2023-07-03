@@ -1,0 +1,17 @@
+CMake Error at /home/liboyu/Desktop/work/blue_gatts_test/gatt_client/build/CMakeFiles/CMakeTmp/CMakeLists.txt:17 (add_executable):
+  Cannot find source file:
+
+    /home/liboyu/Desktop/work/blue_gatts_test/gatt_client/build/CMakeFiles/CMakeTmp/CheckIncludeFile.c
+
+
+CMake Error at /home/liboyu/Desktop/work/blue_gatts_test/gatt_client/build/CMakeFiles/CMakeTmp/CMakeLists.txt:17 (add_executable):
+  No SOURCES given to target: cmTC_5041d
+
+
+CMake Error at /usr/share/cmake-3.22/Modules/CheckIncludeFile.cmake:95 (try_compile):
+  Failed to generate test project build system.
+Call Stack (most recent call first):
+  /usr/share/cmake-3.22/Modules/CheckTypeSize.cmake:250 (check_include_file)
+  /home/liboyu/esp/esp-idf/CMakeLists.txt:236 (check_type_size)
+
+

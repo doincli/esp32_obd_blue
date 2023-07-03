@@ -1,0 +1,18 @@
+{
+  "C_Cpp.intelliSenseEngine": "Tag Parser",
+  "idf.port": "/dev/ttyUSB0",
+  "idf.adapterTargetName": "esp32c6",
+  "idf.openOcdConfigs": [
+    "board/esp32c6-ftdi.cfg"
+  ],
+  "idf.flashType": "UART",
+  "files.associations": {
+    "gatts.h": "c",
+    "ebyte_kfifo.h": "c",
+    "ebyte.h": "c",
+    "nvs_flash.h": "c",
+    "esp_bt.h": "c",
+    "ebyte_core.h": "c",
+    "compare": "c"
+  }
+}
