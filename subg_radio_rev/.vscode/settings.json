@@ -1,0 +1,12 @@
+{
+    "idf.flashType": "UART",
+    "idf.adapterTargetName": "esp32c6",
+    "idf.openOcdConfigs": [
+        "board/esp32c6-ftdi.cfg"
+    ],
+    "idf.port": "/dev/ttyUSB1",
+    "files.associations": {
+        "ebyte.h": "c",
+        "ebyte_kfifo.h": "c"
+    }
+}
