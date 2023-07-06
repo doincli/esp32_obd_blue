@@ -20,6 +20,7 @@
 
 #define PIN_NUM_BUSY    2
 #define PIN_NUM_RST     3
+#define frame_len       3
 
 uint8_t BufferPing[5] = {'p', 'i', 'n', 'g'};
 uint8_t BufferPong[5] = {'p', 'o', 'n', 'g'};
@@ -59,15 +60,15 @@ void app_main(void)
     //uint8_t data_pro = 1;
     while(1){
         Ebyte_Receive( &my_status, rev_data, 0 );
-        
+         printf("seq is %d \n", rev_data[frame_len-1]);
         // ets_delay_us(100);
-        if (rec_seq == rev_data[4])
+        if (rec_seq == rev_data[frame_len-1])
         {
              //接收正确       
-            printf("seq is %d \n",rev_data[4]);
-            for (int i = 0; i < 4; i++)
+           
+            for (int i = 0; i < frame_len; i++)
             {
-                printf("%d ",rev_data[i]);
+                printf("%x ",rev_data[i]);
             }
             printf("\n");
             rec_seq++;
@@ -76,9 +77,8 @@ void app_main(void)
         }else
         {
             //接收错误
-           // printf("rec error\n");
+            printf("rec error\n");
             Ebyte_Send(&my_status, &rec_seq, 1,0);
-
         }
         
         ets_delay_us(500);

@@ -1,0 +1,9 @@
+{
+    "idf.adapterTargetName": "esp32c6",
+    "files.associations": {
+        "gatts.h": "c",
+        "func.h": "c"
+    },
+    "idf.port": "/dev/ttyUSB0",
+    "idf.flashType": "UART"
+}

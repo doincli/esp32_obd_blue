@@ -1,5 +1,3 @@
-idf_component_register(SRCS "test.c" 
+idf_component_register(SRCS "func.c" "test.c"  "gatts_demo.c"
                     INCLUDE_DIRS "."
-                    PRIV_REQUIRES driver ebyte_driver
-                    REQUIRES nvs_flash
-                    REQUIRES bt)
+)

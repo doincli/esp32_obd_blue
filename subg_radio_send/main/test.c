@@ -4,109 +4,105 @@
  * SPDX-License-Identifier: CC0-1.0
  */
 
-#include <stdio.h>
-#include <inttypes.h>
-#include <string.h>
-#include "sdkconfig.h"
-#include "ebyte_kfifo.h"
-#include "ebyte.h"
-#include "math.h"
-#include "OBD_detect.h"
-#include "gatts.h"
+#include "func.h"
 
-
-#include <stdio.h>
-#include <inttypes.h>
-#include <string.h>
-#include "sdkconfig.h"
-#include "nvs_flash.h"
-
-
-#define TX_GPIO_NUM 19
-#define RX_GPIO_NUM 20
-
-#define EBYTE_HOST      SPI2_HOST
-
-#define PIN_NUM_MISO    5
-#define PIN_NUM_MOSI    6
-#define PIN_NUM_CLK     7
-#define PIN_NUM_CS      0
-
-#define PIN_NUM_BUSY    2
-#define PIN_NUM_RST     3
-
-#define Frame_len  3
-
+//车速
 uint8_t speed;
-uint16_t my_common;
+SemaphoreHandle_t mux;
+QueueHandle_t my_que;
+ebyte_status_t my_status;
+uint16_t my_buff;
+frame_data frame1 = {
+    .data = {0},
+    .seq = 1,
+    .old_data = {0},
+    .old_seq = 0,
+};
 
-typedef struct data
-{
-    uint8_t data[Frame_len];
-    uint8_t seq;
-    uint8_t old_data[Frame_len];
-    uint8_t old_seq;
-}frame_data;
+//task1  get speed 1/s
+void get_speed(void *pvParameters) {
+    obd_protocol_handle my_protocol = (obd_protocol_handle)pvParameters;
+  while (1) {
+   BaseType_t mux_ret = xSemaphoreTake(mux,pdMS_TO_TICKS(200));
+   if (mux_ret != pdPASS)
+   {
+    printf("take mux fail\n");
+    continue;
+   }
+   speed = obd_get_engine_speed_val(my_protocol);
+   mux_ret =  xSemaphoreGive(mux);
+   if (mux_ret != pdPASS)
+   {
+    printf("give mux fail\n");
+   }
+    printf("speed is %d\n",speed);
+    vTaskDelay(pdMS_TO_TICKS(1000)); // 延时 1500 毫秒
+  }
+}
 
-typedef frame_data * frame_handle;
-
-void data_refresh(frame_handle frame,uint16_t data){
-   
-    for (int i = 0; i < Frame_len-1; i++)
-    {
-        frame->data[Frame_len-2-i] = (uint8_t)data;
-        frame->old_data[i] = frame->data[i];
-        data = (data >> 8);
+//task2  radio_communicate
+void radio_communicate(void *pvParameters){
+    
+    uint8_t rec_seq[100] = {0};
+    while (1)
+    {   
+         Ebyte_Receive(&my_status, rec_seq, 2000);
+        //  printf("seq  is %d\n",rec_seq[0]);
+        //  printf("frame 1 seq  is %d\n",frame1.seq);
+        if (abs(rec_seq[0] - frame1.old_data[Frame_len-1]) > 1)
+        {
+            frame1.seq = rec_seq[0];
+            frame1.data[Frame_len-1] = rec_seq[0];
+        }
+         if (frame1.seq == rec_seq[0])
+         {
+            //接收正确
+            printf("rec right\n");
+            BaseType_t task2_ret = esp_gatts_queue_rec(&my_buff);
+            if (task2_ret == pdPASS){
+              //  printf("task2_ret is right \n");
+                data_refresh(&frame1,my_buff);
+                Ebyte_Send( &my_status, frame1.data, Frame_len, 0 );
+                seq_refresh(&frame1);
+           //     printf("rec send right\n");
+            }else if (task2_ret == errQUEUE_EMPTY)
+            {
+                vTaskDelay(1000);
+            }
+            
+            for (int i = 0; i < Frame_len; i++)
+            {
+                printf("%x, ",frame1.data[i]);
+            }
+            printf("\n");
+            
+            // printf("frame seq = %d\n",frame1.seq);
+            // printf("data seq = %d\n",frame1.data[4]);
+        }else{
+            //接收错误
+            printf("send error\n");
+             for (int i = 0; i < Frame_len; i++)
+            {
+                printf("%d, ",frame1.old_data[i]);
+            }
+            printf("\n");
+            Ebyte_Send( &my_status, frame1.old_data, Frame_len, 0 );
+        }
+        ets_delay_us(1000);
     }
-
 }
-
-void seq_refresh(frame_handle frame){
-    frame->old_seq = frame->seq;
-    frame->old_data[Frame_len-1] = frame->old_seq;
-    frame->seq++;
-    frame->data[Frame_len-1] = frame->seq;
-}
-
 
 void app_main(void)
 {   
-
-    //ble init 
-    uint16_t my_buff;
+    
+    //配置参数
     esp_err_t ret;
-    BaseType_t com_ret;
-    ret = blue_init();
-    if (ret != ESP_OK)
-    {
-        printf("init fail\n");
-        return ;
-    }
-
-    obd_protocol_handle protocol_status = obd_create(TX_GPIO_NUM,RX_GPIO_NUM);
-    esp_gatts_set_obd(protocol_status);
-
-
-
-    //radio
-    frame_data frame1 = {
-        .data = {0},
-        .seq = 1,
-        .old_data = {0},
-        .old_seq = 0,
-    };
-    frame1.data[Frame_len-1] = 1;
-
+   // BaseType_t com_ret;
     Ebyte_FIFO_t my_fifo;
+    my_que = xQueueCreate(100,sizeof(uint16_t));
 
-    for(int i = 0; i < 3; ++i){
-        printf("start: %d\n", i);
-        ets_delay_us(10000);
-    }
-
-    Ebyte_FIFO_Init(&my_fifo);
-
-    ebyte_status_t my_status;
+    mux = xSemaphoreCreateMutex();
+    set_queue(my_que);
 
     ebyte_config_t my_ebyte_config = {
         .spi_id = EBYTE_HOST,
@@ -123,89 +119,41 @@ void app_main(void)
         .txen_io = -1,
     };
 
+        //radio
+
+    frame1.data[Frame_len-1] = 1;
+
+
+
+    //blue init
+    ret = blue_init();
+    if (ret != ESP_OK)
+    {
+        printf("init fail\n");
+        return ;
+    }
+
+    //odb init
+    TaskHandle_t speed_task;
+    obd_protocol_handle protocol_status = obd_create(TX_GPIO_NUM,RX_GPIO_NUM);
+    esp_gatts_set_obd(protocol_status);
+    
+
+    //fifo  ebyte init
+    fifo_init(&my_fifo);
     Ebyte_Init( my_ebyte_config, &my_status );
 
     printf("init done\n");
 
+    // task
+    xTaskCreate(get_speed,"task_speed",4096,protocol_status,tskIDLE_PRIORITY+1,&speed_task);
+    xTaskCreate(radio_communicate,"task_radio",4096,NULL,tskIDLE_PRIORITY+1,NULL);
 
-   
-
-
-    while (1)
-    {
-        com_ret = esp_gatts_queue_rec(&my_buff);
-        if (com_ret == pdPASS)
-        {
-            data_refresh(&frame1,my_buff);
-            Ebyte_Send( &my_status, frame1.data, Frame_len, 0) ;
-            seq_refresh(&frame1);
-            for (int i = 0; i < Frame_len; i++)
-            {
-                printf("%d, ",frame1.data[i]);
-            }
-            printf("\n");
-            break;
-        }
-    }
-
-
-    
-
-  
-    
-    
-    uint8_t rec_seq[100] = {0};
-    // printf("frame seq = %d\n",frame1.seq);
-    // printf("data seq = %d\n",frame1.data[4]);
 
     while(1){
-        Ebyte_Receive(&my_status, rec_seq, 2000);
-        printf("seq  is %d\n",rec_seq[0]);
-        printf("frame 1 seq  is %d\n",frame1.seq);
-        if (abs(rec_seq[0] - frame1.old_data[Frame_len-1]) > 1)
-        {
-            printf("step 1\n");
-            frame1.seq = rec_seq[0];
-            frame1.data[Frame_len-1] = rec_seq[0];
-        }
-        
-        if (frame1.seq == rec_seq[0])
-        {
-            //接收正确
-           // printf("rec right\n");
-            com_ret = esp_gatts_queue_rec(&my_buff);
-            if (com_ret == pdPASS){
-                data_refresh(&frame1,my_buff);
-                Ebyte_Send( &my_status, frame1.data, Frame_len, 0 );
-                seq_refresh(&frame1);
-           //     printf("rec send right\n");
-            }else if (com_ret == errQUEUE_EMPTY)
-            {
-                vTaskDelay(1000);
-            }
-            
-            
-            for (int i = 0; i < Frame_len; i++)
-            {
-                printf("%x, ",frame1.data[i]);
-            }
-            printf("\n");
-            
-            // printf("frame seq = %d\n",frame1.seq);
-            // printf("data seq = %d\n",frame1.data[4]);
-        }else
-        {
-            //接收错误
-            printf("send error\n");
-             for (int i = 0; i < Frame_len; i++)
-            {
-                printf("%d, ",frame1.old_data[i]);
-            }
-            printf("\n");
-            Ebyte_Send( &my_status, frame1.old_data, Frame_len, 0 );
-        }
-        ets_delay_us(1500);
+
     }
+
     Ebyte_DeInit( &my_status );
 }
 
