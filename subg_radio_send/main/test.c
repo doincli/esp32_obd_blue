@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: CC0-1.0
  */
 
-#include "func.h"
+#include "OBD.h"
 
 //车速
 uint8_t speed;
@@ -12,12 +12,8 @@ SemaphoreHandle_t mux;
 QueueHandle_t my_que;
 ebyte_status_t my_status;
 uint16_t my_buff;
-frame_data frame1 = {
-    .data = {0},
-    .seq = 1,
-    .old_data = {0},
-    .old_seq = 0,
-};
+frame_data frame1;
+
 
 //task1  get speed 1/s
 void get_speed(void *pvParameters) {
@@ -47,8 +43,8 @@ void radio_communicate(void *pvParameters){
     while (1)
     {   
          Ebyte_Receive(&my_status, rec_seq, 2000);
-        //  printf("seq  is %d\n",rec_seq[0]);
-        //  printf("frame 1 seq  is %d\n",frame1.seq);
+        //   printf("seq  is %d\n",rec_seq[0]);
+        //   printf("frame 1 seq  is %d\n",frame1.seq);
         if (abs(rec_seq[0] - frame1.old_data[Frame_len-1]) > 1)
         {
             frame1.seq = rec_seq[0];
@@ -60,7 +56,7 @@ void radio_communicate(void *pvParameters){
             printf("rec right\n");
             BaseType_t task2_ret = esp_gatts_queue_rec(&my_buff);
             if (task2_ret == pdPASS){
-              //  printf("task2_ret is right \n");
+                // printf("task2_ret is right \n");
                 data_refresh(&frame1,my_buff);
                 Ebyte_Send( &my_status, frame1.data, Frame_len, 0 );
                 seq_refresh(&frame1);
@@ -104,26 +100,10 @@ void app_main(void)
     mux = xSemaphoreCreateMutex();
     set_queue(my_que);
 
-    ebyte_config_t my_ebyte_config = {
-        .spi_id = EBYTE_HOST,
-        .radio_mode = RADIO_MODE_LORA,
-        .spi_speed_hz = 10 * 1000 * 1000,
-        .miso_io = PIN_NUM_MISO,
-        .mosi_io = PIN_NUM_MOSI,
-        .sclk_io = PIN_NUM_CLK,
-        .cs_io = PIN_NUM_CS,
-        .busy_io = PIN_NUM_BUSY,
-        .rst_io = PIN_NUM_RST,
-        .dio1_io = -1,
-        .rxen_io = -1,
-        .txen_io = -1,
-    };
+    ebyte_config_t my_ebyte_config = get_ebyte_config();
 
-        //radio
-
-    frame1.data[Frame_len-1] = 1;
-
-
+    //ridio frame init
+    frame_init(&frame1);
 
     //blue init
     ret = blue_init();
@@ -151,10 +131,12 @@ void app_main(void)
 
 
     while(1){
-
+        vTaskDelay(1000);
     }
 
+    
     Ebyte_DeInit( &my_status );
+    obd_delete(protocol_status);
 }
 
 

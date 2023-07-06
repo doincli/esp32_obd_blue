@@ -1,5 +1,21 @@
-#include "func.h"
+#include "OBD.h"
+
 // uint16_t my_common;
+
+ebyte_config_t my_ebyte_config = {
+    .spi_id = EBYTE_HOST,
+    .radio_mode = RADIO_MODE_LORA,
+    .spi_speed_hz = 10 * 1000 * 1000,
+    .miso_io = PIN_NUM_MISO,
+    .mosi_io = PIN_NUM_MOSI,
+    .sclk_io = PIN_NUM_CLK,
+    .cs_io = PIN_NUM_CS,
+    .busy_io = PIN_NUM_BUSY,
+    .rst_io = PIN_NUM_RST,
+    .dio1_io = -1,
+    .rxen_io = -1,
+    .txen_io = -1,
+};
 
 void Ebyte_FIFO_Init(Ebyte_FIFO_t* queue) {
     queue->front = -1;
@@ -77,3 +93,15 @@ void fifo_init( Ebyte_FIFO_t *my_fifo){
     Ebyte_FIFO_Init(my_fifo);
 }
 
+void frame_init(frame_handle frame){
+    memset(frame->data,0,Frame_len-1);
+    frame->seq = 1;
+    memset(frame->old_data,0,Frame_len);
+    frame->old_seq = 0;
+    frame->data[Frame_len-1] = 1;
+    // frame->old_data[Frame_len-1] = 0;
+}
+
+ebyte_config_t get_ebyte_config(){
+    return my_ebyte_config;
+}

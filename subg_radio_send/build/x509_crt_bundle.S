@@ -1,4 +1,4 @@
-/* * Data converted from /home/liboyu/Desktop/obd_gatts_radio_v3/subg_radio_send/build/esp-idf/mbedtls/x509_crt_bundle
+/* * Data converted from /home/liboyu/Desktop/obd_gatts_radio_v4/subg_radio_send/build/esp-idf/mbedtls/x509_crt_bundle
  */
 .data
 .section .rodata.embedded

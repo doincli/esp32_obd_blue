@@ -1,4 +1,4 @@
-# Install script for directory: /home/liboyu/Desktop/obd_gatts_radio_v3/subg_radio_send/components/OBD_driver
+# Install script for directory: /home/liboyu/Desktop/obd_gatts_radio_v4/subg_radio_send/components/OBD_driver
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

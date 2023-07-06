@@ -51,6 +51,8 @@ typedef struct data
 typedef frame_data * frame_handle;
 
 
+
+
 //数据更新
 void data_refresh(frame_handle frame,uint16_t data);
 
@@ -71,4 +73,9 @@ int Ebyte_FIFO_Write(Ebyte_FIFO_t* queue, uint8_t* pData, int len) ;
 
 int Ebyte_FIFO_Read(Ebyte_FIFO_t* queue, uint8_t* pData, int len) ;
 
+
+void frame_init(frame_handle frame);
+
+
+ebyte_config_t get_ebyte_config();
 #endif // FUNC_H
