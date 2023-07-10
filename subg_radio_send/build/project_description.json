@@ -1,7 +1,7 @@
 {
     "version":            "1",
     "project_name":       "hello_world",
-    "project_version":    "cf395c0e-dirty",
+    "project_version":    "8001a8e2-dirty",
     "project_path":       "/home/liboyu/Desktop/obd_gatts_radio_v4/subg_radio_send",
     "idf_path":           "/home/liboyu/esp/esp-idf",
     "build_dir":          "/home/liboyu/Desktop/obd_gatts_radio_v4/subg_radio_send/build",

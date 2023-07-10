@@ -110,3 +110,5 @@
 878	960	1688629128412781960	/home/liboyu/Desktop/obd_gatts_radio_v4/subg_radio_send/build/bootloader/.bin_timestamp	979cac18fa0d3271
 960	988	0	esp-idf/esptool_py/CMakeFiles/bootloader_check_size	137bfd717677a519
 960	988	0	/home/liboyu/Desktop/obd_gatts_radio_v4/subg_radio_send/build/bootloader/esp-idf/esptool_py/CMakeFiles/bootloader_check_size	137bfd717677a519
+3	46	0	esp-idf/esptool_py/CMakeFiles/bootloader_check_size	137bfd717677a519
+3	46	0	/home/liboyu/Desktop/obd_gatts_radio_v4/subg_radio_send/build/bootloader/esp-idf/esptool_py/CMakeFiles/bootloader_check_size	137bfd717677a519
