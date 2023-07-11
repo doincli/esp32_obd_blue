@@ -1,5 +1,23 @@
 # OBD + GATTS + RADIO
 
+## 环境准备
+
+开发板芯片型号:esp32c6
+
+开发工具： esp-idf/master
+
+其它配置
+
+打开蓝牙,并且蓝牙配置选择为4.2 features
+
+![image-20230711104242940](https://image-1302263000.cos.ap-nanjing.myqcloud.com/img/image-20230711104242940.png)
+
+![image-20230711104426378](https://image-1302263000.cos.ap-nanjing.myqcloud.com/img/image-20230711104426378.png)
+
+
+
+具体配置在相应的sdkconfig中
+
 ## 整体思路：
 
 一共使用3块ESP32 （以下都用简称了）

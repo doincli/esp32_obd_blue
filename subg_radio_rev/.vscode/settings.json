@@ -1,5 +1,5 @@
 {
     "idf.adapterTargetName": "esp32c6",
-    "idf.port": "/dev/ttyUSB3",
+    "idf.port": "/dev/ttyUSB1",
     "idf.flashType": "UART"
 }
