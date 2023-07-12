@@ -2,8 +2,17 @@
     "idf.adapterTargetName": "esp32c6",
     "files.associations": {
         "gatts.h": "c",
-        "func.h": "c"
+        "func.h": "c",
+        "app.h": "c",
+        "obd2.h": "c",
+        "esp_err.h": "c",
+        "bitset": "c",
+        "algorithm": "c",
+        "complex": "c"
     },
     "idf.port": "/dev/ttyUSB0",
-    "idf.flashType": "UART"
+    "idf.flashType": "UART",
+    "idf.openOcdConfigs": [
+        "board/esp32c6-ftdi.cfg"
+    ]
 }
