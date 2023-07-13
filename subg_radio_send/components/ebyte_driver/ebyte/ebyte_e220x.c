@@ -1271,9 +1271,9 @@ void Ebyte_E220x_ClearDeviceErrors( ebyte_status_t *ebyte_status )
 uint16_t Ebyte_E220x_SendPayload( ebyte_status_t *ebyte_status, uint8_t *payload, uint8_t size, uint32_t timeout )
 {
     uint16_t irq_return;
-
+    printf("1.1\n");
     Ebyte_E220x_SetStandby(ebyte_status, STDBY_RC);
-
+printf("1.2\n");
     if( ebyte_status->rdo_mode == RADIO_MODE_LORA )
     {
         Ebyte_E220x_SetLoraPacketParams( ebyte_status, size );
@@ -1282,24 +1282,24 @@ uint16_t Ebyte_E220x_SendPayload( ebyte_status_t *ebyte_status, uint8_t *payload
     {
         Ebyte_E220x_SetFskPacketParams( ebyte_status, size );
     }
-    
+    printf("1.3\n");
     Ebyte_E220x_SetPayload( ebyte_status, payload, size );
-
+printf("1.4\n");
     Ebyte_E220x_SetTx( ebyte_status, timeout );
-
+printf("1.5\n");
     do
     {
         Ebyte_Port_DelayMs( 1 );
         Ebyte_E220x_GetIrqStatus(ebyte_status);
     }
     while( !ebyte_status->irqStatus );
-    
+    printf("1.6\n");
     irq_return = ebyte_status->irqStatus;
-
+printf("1.7\n");
     Ebyte_Port_TransmitCallback( ebyte_status->irqStatus );
-    
+    printf("1.8\n");
     Ebyte_E220x_ClearIrqStatus ( ebyte_status, IRQ_RADIO_ALL );
-
+printf("1.9\n");
     return irq_return;
 }
 
@@ -1372,14 +1372,11 @@ void Ebyte_E220x_Init( ebyte_status_t *ebyte_status )
 {
     bool enable = false;
     uint8_t SymbNum = 0;
-
     Ebyte_E220x_Reset( ebyte_status );
     Ebyte_E220x_Wakeup( ebyte_status );
-
     Ebyte_E220x_SetStandby( ebyte_status, STDBY_RC );
     // Ebyte_E220x_WriteRegister(ebyte_status, REG_XTA_TRIM, XTA_TRIM_VALUE); 
     // Ebyte_E220x_WriteRegister(ebyte_status, REG_XTB_TRIM, XTA_TRIM_VALUE); 
-
     if ( ebyte_status->rxen_io == -1 && ebyte_status->txen_io == -1) {
         Ebyte_E220x_SetDio2AsRfSwitchCtrl( ebyte_status, 1 );
     }
@@ -1389,11 +1386,9 @@ void Ebyte_E220x_Init( ebyte_status_t *ebyte_status )
     Ebyte_E220x_SetStandby(ebyte_status, STDBY_RC);
 
     Ebyte_E220x_SetRegulatorMode( ebyte_status, USE_DCDC );
-
     Ebyte_E220x_SetBufferBaseAddress( ebyte_status, 0x00, 0x00 );
 
     Ebyte_E220x_SetTxPaParams( ebyte_status, 22, RADIO_RAMP_200_US );
-
     Ebyte_E220x_SetDioIrqParams(ebyte_status, IRQ_RX_DONE | IRQ_RX_TX_TIMEOUT,
                         IRQ_RX_DONE | IRQ_RX_TX_TIMEOUT,
                         IRQ_RADIO_NONE ,
@@ -1430,7 +1425,6 @@ void Ebyte_E220x_Init( ebyte_status_t *ebyte_status )
         
         Ebyte_E220x_SetWhiteningSeed( ebyte_status, 0x01FF );
     }
-
     Ebyte_E220x_SetRx( ebyte_status, 0 );
 }
 

@@ -1,5 +1,5 @@
 {
-    "idf.adapterTargetName": "esp32c6",
+    "idf.adapterTargetName": "esp32c3",
     "files.associations": {
         "gatts.h": "c",
         "func.h": "c",
@@ -8,11 +8,19 @@
         "esp_err.h": "c",
         "bitset": "c",
         "algorithm": "c",
-        "complex": "c"
+        "complex": "c",
+        "iostream": "c",
+        "obd_detect.h": "c",
+        "esp_system.h": "c",
+        "ebyte_core.h": "c",
+        "_default_types.h": "c",
+        "spi_master.h": "c",
+        "ebyte_e220x.h": "c",
+        "ebyte_conf.h": "c"
     },
     "idf.port": "/dev/ttyUSB0",
     "idf.flashType": "UART",
     "idf.openOcdConfigs": [
-        "board/esp32c6-ftdi.cfg"
+        "board/esp32c3-ftdi.cfg"
     ]
 }

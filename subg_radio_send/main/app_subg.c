@@ -1,27 +1,17 @@
 #include "app.h"
-#include "obd2.h"
-#include <stdlib.h>
 
 uint8_t rec_seq[100] = {0};
-ebyte_status_t my_status;
+ebyte_handle_t my_ebyte;
 void app_subg_init(){
+
     Ebyte_FIFO_t my_fifo;
-    ebyte_config_t my_ebyte_config = get_ebyte_config();
-    frame_handle frame = get_frame();
-    frame_init(frame);
-    //fifo  ebyte init
+    ebyte_config_t* my_ebyte_config = get_ebyte_config();
     fifo_init(&my_fifo);
-    
-    Ebyte_Init( my_ebyte_config, &my_status );
+    my_ebyte = Ebyte_Init(*my_ebyte_config);
 }
 
-ebyte_status_t app_get_status(){
-    return my_status;
-}
-
-void app_subg_send_and_recv(uint32_t ticks_to_wait,uint16_t data)
+void app_subg_send_and_recv(uint32_t ticks_to_wait,uint16_t data,uint8_t retry)
 {
-    // printf("step 1\n");
     uint8_t send_buf[3] = {0};
     uint8_t seq = rand() % 256;
     for (int i = 0; i < Frame_len - 1; i++)
@@ -30,13 +20,13 @@ void app_subg_send_and_recv(uint32_t ticks_to_wait,uint16_t data)
         data = (data>>8);
     }
     send_buf[Frame_len-1] = seq;
-    
-    ebyte_status_t my_status = app_get_status();
-    
-    Ebyte_Send( &my_status, send_buf, Frame_len, 0 );
+    printf("step1\n");
+    int times = 0;
+    Ebyte_Send( my_ebyte, send_buf, Frame_len, ticks_to_wait );
+     printf("step2\n");
     while (1)
     {   
-        Ebyte_Receive(&my_status, rec_seq, 2000);
+        Ebyte_Receive(my_ebyte, rec_seq, ticks_to_wait);
          printf("rec seq is %d\n",rec_seq[0]);
         if (rec_seq[0] == seq)
         {
@@ -44,9 +34,15 @@ void app_subg_send_and_recv(uint32_t ticks_to_wait,uint16_t data)
             return;
         }else
         {
-            Ebyte_Send( &my_status, send_buf, Frame_len, 0 );
+            printf("rec error\n");
+            Ebyte_Send( my_ebyte, send_buf, Frame_len, 0 );
+            times++;
+            if (times == retry)
+            {
+                printf("retry error\n");
+                return;
+            }
         }
-        
     }   
 }
 

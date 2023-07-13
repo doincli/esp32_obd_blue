@@ -7,20 +7,17 @@
 #include <inttypes.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-#include "freertos/event_groups.h"
 #include "freertos/queue.h"
 #include "esp_system.h"
 #include "esp_log.h"
 #include "nvs_flash.h"
 #include "esp_bt.h"
-
 #include "esp_gap_ble_api.h"
 #include "esp_gatts_api.h"
 #include "esp_bt_defs.h"
 #include "esp_bt_main.h"
 #include "esp_gatt_common_api.h"
 #include "obd_detect.h"
-
 #include "sdkconfig.h"
 
 #define GATTS_TAG "GATTS_DEMO"
@@ -55,8 +52,6 @@ struct gatts_profile_inst {
     esp_bt_uuid_t descr_uuid;
 };
 
-
-
 typedef struct {
     uint8_t                 *prepare_buf;
     int                     prepare_len;
@@ -64,9 +59,12 @@ typedef struct {
 
 void example_write_event_env(esp_gatt_if_t gatts_if, prepare_type_env_t *prepare_write_env, esp_ble_gatts_cb_param_t *param);
 
+
+/**
+  * @brief  init bluetooth
+  * 
+  */
 esp_err_t blue_init();
-esp_err_t esp_gatts_set_obd(obd_protocol_handle odb_handle);
-BaseType_t  esp_gatts_queue_rec(uint16_t *data);
-void  set_queue(QueueHandle_t queue);
+
 
 #endif // GATTS_H

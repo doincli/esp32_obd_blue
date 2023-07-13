@@ -13,18 +13,20 @@
 #include "esp_system.h"
 #include "nvs_flash.h"
 
+//obd 引脚
 #define TX_GPIO_NUM 19
-#define RX_GPIO_NUM 20
+#define RX_GPIO_NUM 18
+
 
 #define EBYTE_HOST      SPI2_HOST
 
-#define PIN_NUM_MISO    5
-#define PIN_NUM_MOSI    6
+#define PIN_NUM_MISO    4
+#define PIN_NUM_MOSI    5
 #define PIN_NUM_CLK     7
-#define PIN_NUM_CS      0
+#define PIN_NUM_CS      6
 
-#define PIN_NUM_BUSY    2
-#define PIN_NUM_RST     3
+#define PIN_NUM_BUSY    1
+#define PIN_NUM_RST     0
 
 #define Frame_len  3
 
@@ -40,26 +42,6 @@ typedef struct {
 } Ebyte_FIFO_t;
 
 
-//重传的结构体
-typedef struct data
-{
-    uint8_t data[Frame_len];
-    uint8_t seq;
-    uint8_t old_data[Frame_len];
-    uint8_t old_seq;
-}frame_data;
-typedef frame_data * frame_handle;
-
-
-
-
-//数据更新
-void data_refresh(frame_handle frame,uint16_t data);
-
-
-//序列更新
-void seq_refresh(frame_handle frame);
-
 //fifo init
 void fifo_init( Ebyte_FIFO_t *my_fifo);
 
@@ -74,10 +56,10 @@ int Ebyte_FIFO_Write(Ebyte_FIFO_t* queue, uint8_t* pData, int len) ;
 int Ebyte_FIFO_Read(Ebyte_FIFO_t* queue, uint8_t* pData, int len) ;
 
 
-void frame_init(frame_handle frame);
+/**
+  * @brief  get the ebyte_config
+  */
+ebyte_config_t* get_ebyte_config();
 
-
-ebyte_config_t get_ebyte_config();
-frame_handle get_frame();
 
 #endif // FUNC_H

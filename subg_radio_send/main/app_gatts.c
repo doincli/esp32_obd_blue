@@ -13,7 +13,6 @@
 *
 ****************************************************************************/
 
-#include "gatts.h"
 #include "app.h"
 
 // obd_protocol_handle my_obd;
@@ -62,6 +61,7 @@ static esp_ble_adv_data_t adv_data = {
     .p_service_uuid = adv_service_uuid128,
     .flag = (ESP_BLE_ADV_FLAG_GEN_DISC | ESP_BLE_ADV_FLAG_BREDR_NOT_SPT),
 };
+
 // scan response data
 static esp_ble_adv_data_t scan_rsp_data = {
     .set_scan_rsp = true,
@@ -258,7 +258,6 @@ static void gatts_profile_a_event_handler(esp_gatts_cb_event_t event, esp_gatt_i
         memset(&rsp, 0, sizeof(esp_gatt_rsp_t));
         rsp.attr_value.handle = param->read.handle;
         rsp.attr_value.len = 1;
-
         uint8_t tmp = app_obd_get_speed();
         printf("blue send speed is %d\n",tmp);
         rsp.attr_value.value[0] = tmp;
@@ -279,7 +278,6 @@ static void gatts_profile_a_event_handler(esp_gatts_cb_event_t event, esp_gatt_i
         {
          ret = xQueueSend(evt_queue, &combinedNumber, 0);
         }
-
 
         if (ret == pdPASS)
         {
@@ -535,13 +533,14 @@ void app_ble_evt_task(void* arg)
 {
     QueueHandle_t evt_queue = (QueueHandle_t)arg;
     uint16_t evt = 0;
+    uint8_t retry = 3;
     while (1) {
         BaseType_t ret = xQueueReceive(evt_queue, &evt, portMAX_DELAY);
         if (ret == pdPASS)
         {
             printf("rec is success(evt: 0x%04x), call subG send and receive\n", evt);
             // call subG send and receive API
-            app_subg_send_and_recv(3000 / portTICK_PERIOD_MS,evt);
+            app_subg_send_and_recv(1000,evt,retry);
         }
 
     }
