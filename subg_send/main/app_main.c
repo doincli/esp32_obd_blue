@@ -11,6 +11,7 @@
 
 void app_main(void)
 {   
+    master_init();
     app_subg_init();
     printf("app_subg_init");
     app_ble_init();

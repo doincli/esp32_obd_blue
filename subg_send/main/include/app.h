@@ -5,6 +5,7 @@
 #include "esp_err.h"
 #include "gatts.h"
 #include "obd2.h"
+#include "QMA.h"
 
 //ebyte的结构体
 typedef struct {
@@ -65,4 +66,5 @@ void app_subg_send_and_recv(uint32_t ticks_to_wait,uint16_t data,uint8_t retry);
   */
 void app_subg_init();
 
+void master_init();
 #endif

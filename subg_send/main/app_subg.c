@@ -130,3 +130,24 @@ void fifo_init( Ebyte_FIFO_t *my_fifo){
 ebyte_config_t* get_ebyte_config(){
     return &my_ebyte_config;
 }
+
+void app_qam_task(){
+    float X_AXIS_A;
+    float Y_AXIS_A;
+    float Z_AXIS_A;
+    while(1)
+    {	   
+        X_AXIS_A = QMA7981_read_DXM() ;
+        Y_AXIS_A = QMA7981_read_DYM() ;
+        Z_AXIS_A = QMA7981_read_DZM() ;
+        printf("X_A = %.3f g, Y_A = %.3f g, Z_A = %.3f g. \n", X_AXIS_A, Y_AXIS_A, Z_AXIS_A);
+        printf("\n");
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
+    }
+}
+void master_init(){
+    i2c_master_init();
+    ESP_ERROR_CHECK(QMA7981_setMode(QMA7981_MODE_100K_cmd));	
+    ESP_ERROR_CHECK(QMA7981_setAcc(QMA7981_RAG_2g_cmd));
+    xTaskCreate(app_qam_task, "app_qam_task", 4096, NULL, 5, NULL);
+}
