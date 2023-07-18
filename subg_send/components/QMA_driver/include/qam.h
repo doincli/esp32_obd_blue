@@ -17,13 +17,11 @@
 #define QMA7981_DEVICE_ADDR           0x00 
 #define QMA7981_MAX_VALUE 0x3FFF							   /*!< QMA7981 range */
 
-
 #define QMA7981_DXM_ADDR 0x01								/*!< QMA7981 register X-axis acceleration address */
 #define QMA7981_DYM_ADDR 0x03								/*!< QMA7981 register Y-axis acceleration address */
 #define QMA7981_DZM_ADDR 0x05								/*!< QMA7981 register Z-axis acceleration address */
 #define QMA7981_MODE_ADDR         0x11                      /*!< Register addresses of mode register */
 #define QMA7981_RANGE_ADDR      0x10                        /*!< Register addresses of range register */    
-
 
 #define QMA7981_MODE_100K_cmd 0x83					 /*!< The command to set QMA7981 to active mode 100k */    
 #define QMA7981_MODE_500K_cmd 0x80					
@@ -40,7 +38,7 @@
 *     - ESP_OK   Success
 *     - ESP_FAIL Error
 */
-esp_err_t i2c_master_init(void);
+esp_err_t qma7981_master_init(void);
 
 /**
 * @brief read data from the register of QMA7981
@@ -53,7 +51,7 @@ esp_err_t i2c_master_init(void);
 *     - ESP_OK   Success
 *     - ESP_FAIL Error
 */
-esp_err_t QMA7981_register_read(uint8_t reg_addr, uint8_t *data, size_t len);
+esp_err_t qma7981_register_read(uint8_t reg_addr, uint8_t *data, size_t len);
 
 /**
 * @brief write cmd to the register of QMA7981
@@ -65,7 +63,7 @@ esp_err_t QMA7981_register_read(uint8_t reg_addr, uint8_t *data, size_t len);
 *     - ESP_OK   Success
 *     - ESP_FAIL Error
 */
-esp_err_t QMA7981_register_write_byte(uint8_t reg_addr, uint8_t cmd);
+esp_err_t qma7981_register_write_byte(uint8_t reg_addr, uint8_t cmd);
 
 /**
 * @brief set the QMA7981 speed and activity
@@ -76,7 +74,7 @@ esp_err_t QMA7981_register_write_byte(uint8_t reg_addr, uint8_t cmd);
 *     - ESP_OK   Success
 *     - ESP_FAIL Error
 */
-esp_err_t QMA7981_setMode(uint8_t cmd);
+esp_err_t qma7981_setMode(uint8_t cmd);
 
 /**
 * @brief set the QMA7981 accuracy
@@ -87,7 +85,7 @@ esp_err_t QMA7981_setMode(uint8_t cmd);
 *     - ESP_OK   Success
 *     - ESP_FAIL Error
 */
-esp_err_t QMA7981_setAcc(uint8_t cmd);
+esp_err_t qma7981_setAcc(uint8_t cmd);
 
 /**
 * @brief read the acceleration of X axis
@@ -95,7 +93,7 @@ esp_err_t QMA7981_setAcc(uint8_t cmd);
 * @return
 *     - the acceleration of X axis
 */
-float QMA7981_read_DXM();
+float qma7981_read_DXM();
 
 /**
 * @brief read the acceleration of Y axis
@@ -103,7 +101,7 @@ float QMA7981_read_DXM();
 * @return
 *     - the acceleration of Y axis
 */
-float QMA7981_read_DYM();
+float qma7981_read_DYM();
 
 /**
 * @brief read the acceleration of Z axis
@@ -111,5 +109,5 @@ float QMA7981_read_DYM();
 * @return
 *     - the acceleration of Z axis
 */
-float QMA7981_read_DZM();
+float qma7981_read_DZM();
 #endif

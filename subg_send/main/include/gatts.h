@@ -36,7 +36,6 @@
 #define PROFILE_NUM 1
 #define PROFILE_A_APP_ID 0
 
-
 struct gatts_profile_inst {
     esp_gatts_cb_t gatts_cb;
     uint16_t gatts_if;
@@ -59,12 +58,10 @@ typedef struct {
 
 void example_write_event_env(esp_gatt_if_t gatts_if, prepare_type_env_t *prepare_write_env, esp_ble_gatts_cb_param_t *param);
 
-
 /**
   * @brief  init bluetooth
   * 
   */
 esp_err_t blue_init();
-
 
 #endif // GATTS_H

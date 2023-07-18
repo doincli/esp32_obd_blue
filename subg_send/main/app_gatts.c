@@ -15,12 +15,11 @@
 
 #include "app.h"
 
-// obd_protocol_handle my_obd;
+static const char* TAG = "blue";
 QueueHandle_t evt_queue = NULL;
-// QueueHandle_t  my_queue;
-// uint16_t my_buff;
+#define EVT_QUEUE_LEN   (100) 
 
-static uint8_t char1_str[] = {0x11,0x22,0x33};
+static uint8_t char1_str[] = {0x11, 0x22, 0x33};
 static esp_gatt_char_prop_t a_property = 0;
 static uint8_t adv_config_done = 0;
 static prepare_type_env_t a_prepare_write_env;
@@ -28,16 +27,16 @@ typedef union float_int
 {
     float floatValue;
     uint8_t bytes[4];
-}ftoi;
+} ftoi;
 
 #ifdef CONFIG_SET_RAW_ADV_DATA
 static uint8_t raw_adv_data[] = {
-        0x02, 0x01, 0x06,
-        0x02, 0x0a, 0xeb, 0x03, 0x03, 0xab, 0xcd
+    0x02, 0x01, 0x06,
+    0x02, 0x0a, 0xeb, 0x03, 0x03, 0xab, 0xcd
 };
 static uint8_t raw_scan_rsp_data[] = {
-        0x0f, 0x09, 0x45, 0x53, 0x50, 0x5f, 0x47, 0x41, 0x54, 0x54, 0x53, 0x5f, 0x44,
-        0x45, 0x4d, 0x4f
+    0x0f, 0x09, 0x45, 0x53, 0x50, 0x5f, 0x47, 0x41, 0x54, 0x54, 0x53, 0x5f, 0x44,
+    0x45, 0x4d, 0x4f
 };
 #else
 
@@ -89,8 +88,7 @@ static void gatts_profile_a_event_handler(esp_gatts_cb_event_t event, esp_gatt_i
 #endif /* CONFIG_SET_RAW_ADV_DATA */
 
 
-static esp_attr_value_t gatts_demo_char1_val =
-{
+static esp_attr_value_t gatts_demo_char1_val ={
     .attr_max_len = GATTS_DEMO_CHAR_VAL_LEN_MAX,
     .attr_len     = sizeof(char1_str),
     .attr_value   = char1_str,
@@ -172,7 +170,8 @@ static void gap_event_handler(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param
     }
 }
 
-void example_write_event_env(esp_gatt_if_t gatts_if, prepare_type_env_t *prepare_write_env, esp_ble_gatts_cb_param_t *param){
+void example_write_event_env(esp_gatt_if_t gatts_if, prepare_type_env_t *prepare_write_env, esp_ble_gatts_cb_param_t *param)
+{
     esp_gatt_status_t status = ESP_GATT_OK;
     if (param->write.need_rsp){
         if (param->write.is_prep){
@@ -216,7 +215,8 @@ void example_write_event_env(esp_gatt_if_t gatts_if, prepare_type_env_t *prepare
     }
 }
 
-static void gatts_profile_a_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t *param) {
+static void gatts_profile_a_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t *param) 
+{
     switch (event) {
     case ESP_GATTS_REG_EVT:
         ESP_LOGI(GATTS_TAG, "REGISTER_APP_EVT, status %d, app_id %d", param->reg.status, param->reg.app_id);
@@ -265,8 +265,8 @@ static void gatts_profile_a_event_handler(esp_gatts_cb_event_t event, esp_gatt_i
         rsp.attr_value.len = 5;
         uint8_t tmp = app_obd_get_speed();
         ftoi fi_tmp;
-        fi_tmp.floatValue = get_QAM_x_acc();
-        printf("blue send speed is %d,acc is %f\n",tmp,fi_tmp.floatValue);
+        fi_tmp.floatValue = app_get_qam_x_acc();
+        ESP_LOGI(TAG, "blue send speed is %d,acc is %f\n",tmp,fi_tmp.floatValue);
         rsp.attr_value.value[0] = tmp;
         rsp.attr_value.value[1] = fi_tmp.bytes[0];
         rsp.attr_value.value[2] = fi_tmp.bytes[1];
@@ -292,17 +292,17 @@ static void gatts_profile_a_event_handler(esp_gatts_cb_event_t event, esp_gatt_i
 
         if (ret == pdPASS)
         {
-            printf("queue send success\n");
+            ESP_LOGI(TAG, "queue send success\n");
         }else if (ret == errQUEUE_FULL)
         {
             //队列满处理 可以后面添加
-            printf("queuefull\n");
+            ESP_LOGI(TAG, "queuefull\n");
         }
-        printf("command is %x\n",combinedNumber);
-        printf("send data is %x,Waiting num is %d,available num is %d\n",combinedNumber,uxQueueMessagesWaiting(evt_queue),uxQueueSpacesAvailable(evt_queue));
-        // printf("command is %x\n",combinedNumber);
+        ESP_LOGI(TAG, "command is %x\n",combinedNumber);
+        ESP_LOGI(TAG, "send data is %x,Waiting num is %d,available num is %d\n",combinedNumber,uxQueueMessagesWaiting(evt_queue),uxQueueSpacesAvailable(evt_queue));
+        // ESP_LOGI(TAG, "command is %x\n",combinedNumber);
 
-        // printf("command is %s\n",param->write.value);
+        // ESP_LOGI(TAG, "command is %s\n",param->write.value);
             // esp_log_buffer_hex(GATTS_TAG, param->write.value, param->write.len);
             if (gl_profile_tab[PROFILE_A_APP_ID].descr_handle == param->write.handle && param->write.len == 2){
                 uint16_t descr_value = param->write.value[1]<<8 | param->write.value[0];
@@ -475,10 +475,8 @@ static void gatts_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_
     } while (0);
 }
 
-
 esp_err_t blue_init()
 {
-
     esp_err_t ret;
 
     // Initialize NVS.
@@ -537,48 +535,35 @@ esp_err_t blue_init()
     return ret;
 }
 
-
-#define EVT_QUEUE_LEN   (100)
-
 void app_ble_evt_task(void* arg)
 {
     QueueHandle_t evt_queue = (QueueHandle_t)arg;
     uint16_t evt = 0;
-    // uint8_t data = 1;
     uint8_t retry = 3;
-    //test
-   // xQueueSend(evt_queue,&data,portMAX_DELAY);
     while (1) {
-       
         BaseType_t ret = xQueueReceive(evt_queue, &evt, portMAX_DELAY);
-        if (ret == pdPASS)
-        {
-            printf("rec is success(evt: 0x%04x), call subG send and receive\n", evt);
+        if (ret == pdPASS){
+            ESP_LOGI(TAG, "rec is success(evt: 0x%04x), call subG send and receive\n", evt);
             // call subG send and receive API
             app_subg_send_and_recv(1000,evt,retry);
         }
-        //test
-        // xQueueSend(evt_queue,&data,portMAX_DELAY);
-       // vTaskDelay(100);
     }
 }
-
 
 esp_err_t app_ble_init()
 {
     // create event queue
-     evt_queue = xQueueCreate(EVT_QUEUE_LEN, sizeof(uint16_t));
+    evt_queue = xQueueCreate(EVT_QUEUE_LEN, sizeof(uint16_t));
 
     // check queue create success or not
     if (evt_queue == NULL) {
-        printf("create queue fail\n");
+        ESP_LOGE(TAG, "create queue fail\n");
         return ESP_FAIL;
     }
 
     esp_err_t ret = blue_init();
-    if (ret != ESP_OK)
-    {
-        printf("init fail\n");
+    if (ret != ESP_OK){
+        ESP_LOGE(TAG, "init fail\n");
         return ESP_FAIL;
     }
     xTaskCreate(app_ble_evt_task, "app_ble_evt_task", 4096, evt_queue, 5, NULL);

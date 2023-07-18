@@ -3,5 +3,6 @@ idf_component_register(
                             app_main.c 
                             app_gatts.c
                             app_subg.c
+                            app_qam.c
                     INCLUDE_DIRS "include"
 )

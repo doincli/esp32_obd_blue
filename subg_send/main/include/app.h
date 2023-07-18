@@ -5,7 +5,7 @@
 #include "esp_err.h"
 #include "gatts.h"
 #include "obd2.h"
-#include "QMA.h"
+#include "app_qam.h"
 
 //ebyte的结构体
 typedef struct {
@@ -15,21 +15,17 @@ typedef struct {
     int size;
 } Ebyte_FIFO_t;
 
-
-//fifo init
-void fifo_init( Ebyte_FIFO_t *my_fifo);
-
+/**
+  * @brief  Ebyte FIFO init
+  *  
+  */
 void Ebyte_FIFO_Init(Ebyte_FIFO_t* queue);
 
-bool Ebyte_FIFO_IsEmpty(Ebyte_FIFO_t* queue);
-
-bool Ebyte_FIFO_IsFull(Ebyte_FIFO_t* queue);
-
-int Ebyte_FIFO_Write(Ebyte_FIFO_t* queue, uint8_t* pData, int len) ;
-
-int Ebyte_FIFO_Read(Ebyte_FIFO_t* queue, uint8_t* pData, int len) ;
-
-
+/**
+  * @brief  fifo init
+  *  
+  */
+ void fifo_init( Ebyte_FIFO_t *my_fifo);
 
 /**
   * @brief  init bluetooth and create a task to transmit the common of app to the other subg
@@ -66,15 +62,4 @@ void app_subg_send_and_recv(uint32_t ticks_to_wait,uint16_t data,uint8_t retry);
   */
 void app_subg_init();
 
-/**
-  * @brief  init i2c
-  */
-void master_init();
-
-/**
-  * @brief  get accuracy of x axis
-  * 
-  * @return accuracy of x axis
-  */
-float get_QAM_x_acc();
 #endif

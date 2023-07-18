@@ -8,17 +8,17 @@
 
 #include "app.h"
 
+static const char* TAG = "app_main";
 
 void app_main(void)
 {   
-    master_init();
+    app_master_init();
     app_subg_init();
-    printf("app_subg_init");
+    ESP_LOGI(TAG, "app_subg_init");
     app_ble_init();
-     printf("app_ble_init");
+    ESP_LOGI(TAG, "app_ble_init");
     app_obd_init();
-    printf("init done\n");
-
+    ESP_LOGI(TAG, "init done\n");
 }
 
 

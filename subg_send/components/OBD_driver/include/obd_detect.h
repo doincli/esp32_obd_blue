@@ -19,6 +19,7 @@
 #include <stdio.h>
 #include <inttypes.h>
 #include "sdkconfig.h"
+#include "esp_log.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include <driver/twai.h>
@@ -29,10 +30,8 @@
 #define BPS_500K   1            /*!< speed   */
 #define BPS_250K   0
 
-
 #define MSG_ID 0x7DF            /*!< MSG_ID the head of message of protocol   */
 #define MSG_ID_EXP 0x18DB33F1 
-
 
 typedef enum 
 {
@@ -42,7 +41,6 @@ typedef enum
     ISO15765_29bit_250K          /*!< Show current search mode is ISO15765_29bit,speed is 250KB */
 }protocol;
 
-
 typedef struct 
 {
     uint8_t  tx_port;            /*!< IO port */
@@ -50,7 +48,6 @@ typedef struct
 }obd_io;
 
 typedef obd_io * obd_io_handle;
-
 typedef struct 
 {
     uint8_t    protocol_t;          /*!< protocol can be defined as  ISO15765_11bit and ISO15765_29bit */
@@ -62,9 +59,6 @@ typedef struct
 }detect_config_t;
 
 typedef detect_config_t* obd_protocol_handle;
-
-
-
 
 /**
   * @brief  breate a obd struct and init ,can match the right protocol

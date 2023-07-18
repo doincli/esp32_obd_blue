@@ -17,7 +17,6 @@
 #define TX_GPIO_NUM 19
 #define RX_GPIO_NUM 18
 
-
 //spi 引脚
 #define EBYTE_HOST      SPI2_HOST
 
@@ -30,10 +29,6 @@
 #define PIN_NUM_BUSY    1
 #define PIN_NUM_RST     0
 
-/*
-SPI 速率设置在subg.c文件里面
-*/
-
 //C6
 // #define PIN_NUM_MISO    5
 // #define PIN_NUM_MOSI    6
@@ -45,9 +40,11 @@ SPI 速率设置在subg.c文件里面
 
 #define Frame_len  3
 
-
 #define EBYTE_MAX_SIZE 256
 
+/**
+  * @brief  get the obd speed
+  */
 uint8_t app_obd_get_speed();
 
 /**
