@@ -43,19 +43,19 @@ typedef enum
 
 typedef struct 
 {
-    uint8_t  tx_port;            /*!< IO port */
-    uint8_t  rx_port;
+  uint8_t  tx_port;            /*!< IO port */
+  uint8_t  rx_port;
 } obd_io;
 
 typedef obd_io * obd_io_handle;
 typedef struct 
 {
-    uint8_t    protocol_t;          /*!< protocol can be defined as  ISO15765_11bit and ISO15765_29bit */
-    uint8_t    statu ;              /*!< current search mode */
-    uint8_t    speed ;              /*!< speed can be defined as  BPS_500K and BPS_250K */
-    obd_io_handle io_port;
-    twai_general_config_t * g_config;
-    twai_timing_config_t *  t_config;
+  uint8_t    protocol_t;          /*!< protocol can be defined as  ISO15765_11bit and ISO15765_29bit */
+  uint8_t    statu ;              /*!< current search mode */
+  uint8_t    speed ;              /*!< speed can be defined as  BPS_500K and BPS_250K */
+  obd_io_handle io_port;
+  twai_general_config_t * g_config;
+  twai_timing_config_t *  t_config;
 } detect_config_t;
 
 typedef detect_config_t* obd_protocol_handle;
