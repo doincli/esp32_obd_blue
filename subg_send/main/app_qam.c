@@ -1,17 +1,17 @@
 #include "app_qam.h"
 
-float X_AXIS_A;
-float Y_AXIS_A;
-float Z_AXIS_A;
+static float x_accuracy;
+static float y_accuracy;
+static float z_accuracy;
 static const char* TAG = "app_qam";
 
 void app_qam_task()
 {
     while(1){	   
-        X_AXIS_A = qma7981_read_DXM() ;
-        Y_AXIS_A = qma7981_read_DYM() ;
-        Z_AXIS_A = qma7981_read_DZM() ;
-        ESP_LOGI(TAG, "X_A = %.3f g, Y_A = %.3f g, Z_A = %.3f g. \n", X_AXIS_A, Y_AXIS_A, Z_AXIS_A);
+        x_accuracy = qma7981_read_DXM() ;
+        y_accuracy = qma7981_read_DYM() ;
+        z_accuracy = qma7981_read_DZM() ;
+        ESP_LOGI(TAG, "X_A = %.3f g, Y_A = %.3f g, Z_A = %.3f g. \n", x_accuracy, y_accuracy, z_accuracy);
         vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
 }
@@ -26,5 +26,5 @@ void app_master_init()
 
 float app_get_qam_x_acc()
 {
-    return X_AXIS_A;
+    return x_accuracy;
 }

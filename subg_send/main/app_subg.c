@@ -1,6 +1,5 @@
 #include "app.h"
-uint8_t old_seq = 0;
-uint8_t rec_seq[100] = {0};
+
 ebyte_handle_t my_ebyte;
 static const char* TAG = "subg";
 
@@ -28,6 +27,8 @@ void app_subg_init()
 
 void app_subg_send_and_recv(uint32_t ticks_to_wait,uint16_t data,uint8_t retry)
 {
+    uint8_t old_seq = 0;
+    uint8_t rec_seq[100] = {0};
     uint8_t send_buf[3] = {0};
     uint8_t seq = rand() % 256;
     while (seq == old_seq)
@@ -46,21 +47,17 @@ void app_subg_send_and_recv(uint32_t ticks_to_wait,uint16_t data,uint8_t retry)
     int times = 0;
     int size1 = Ebyte_Send( my_ebyte, send_buf, Frame_len, ticks_to_wait );
     ESP_LOGI(TAG, "send size is %d,seq is %d\n",size1,seq);
-    while (1)
-    {   
+    while (1) {   
        int size = Ebyte_Receive(my_ebyte, rec_seq, ticks_to_wait);
         ESP_LOGI(TAG, "rec seq is %d,size is %d\n",rec_seq[0],size);
-        if (rec_seq[0] == seq)
-        {
+        if (rec_seq[0] == seq){
             ESP_LOGI(TAG, "rec right\n");
             return;
-        }else
-        {
+        }else{
             ESP_LOGE(TAG, "rec error\n");
             Ebyte_Send( my_ebyte, send_buf, Frame_len, 0 );
             times++;
-            if (times == retry)
-            {
+            if (times == retry){
                 ESP_LOGE(TAG, "retry error\n");
                 return;
             }
