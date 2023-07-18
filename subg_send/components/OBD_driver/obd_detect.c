@@ -127,7 +127,6 @@ esp_err_t obd_twai_deinit(void)
 
 esp_err_t obd_twai_modifed(obd_protocol_handle obd_handle)
 {
-
     if (obd_handle->speed == BPS_500K){
         *obd_handle->t_config = (twai_timing_config_t)TWAI_TIMING_CONFIG_500KBITS();
     }else if (obd_handle->speed == BPS_250K){
@@ -175,7 +174,6 @@ esp_err_t obd_detect(obd_protocol_handle obd_handle)
 
 esp_err_t obd_detect_match(obd_protocol_handle obd_handle)
 {
-
     esp_err_t  right_protocol = obd_detect(obd_handle);
     if (right_protocol == ESP_FAIL){
         obd_twai_deinit();

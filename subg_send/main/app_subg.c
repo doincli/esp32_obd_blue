@@ -77,7 +77,6 @@ void Ebyte_FIFO_Init(Ebyte_FIFO_t* queue)
 
 void fifo_init( Ebyte_FIFO_t *my_fifo)
 {
-    
     for(int i = 0; i < 2; ++i){
         ESP_LOGI(TAG, "start: %d\n", i);
         ets_delay_us(1000);
