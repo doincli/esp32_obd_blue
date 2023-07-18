@@ -39,13 +39,13 @@ typedef enum
     ISO15765_11bit_250K,         /*!< Show current search mode is ISO15765_11bit,speed is 250KB */
     ISO15765_29bit_500K,         /*!< Show current search mode is ISO15765_29bit,speed is 500KB */
     ISO15765_29bit_250K          /*!< Show current search mode is ISO15765_29bit,speed is 250KB */
-}protocol;
+} protocol;
 
 typedef struct 
 {
     uint8_t  tx_port;            /*!< IO port */
     uint8_t  rx_port;
-}obd_io;
+} obd_io;
 
 typedef obd_io * obd_io_handle;
 typedef struct 
@@ -56,7 +56,7 @@ typedef struct
     obd_io_handle io_port;
     twai_general_config_t * g_config;
     twai_timing_config_t *  t_config;
-}detect_config_t;
+} detect_config_t;
 
 typedef detect_config_t* obd_protocol_handle;
 
