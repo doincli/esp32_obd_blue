@@ -66,7 +66,15 @@ void app_subg_send_and_recv(uint32_t ticks_to_wait,uint16_t data,uint8_t retry);
   */
 void app_subg_init();
 
+/**
+  * @brief  init i2c
+  */
 void master_init();
 
+/**
+  * @brief  get accuracy of x axis
+  * 
+  * @return accuracy of x axis
+  */
 float get_QAM_x_acc();
 #endif
