@@ -24,6 +24,11 @@ static uint8_t char1_str[] = {0x11,0x22,0x33};
 static esp_gatt_char_prop_t a_property = 0;
 static uint8_t adv_config_done = 0;
 static prepare_type_env_t a_prepare_write_env;
+typedef union float_int
+{
+    float floatValue;
+    uint8_t bytes[4];
+}ftoi;
 
 #ifdef CONFIG_SET_RAW_ADV_DATA
 static uint8_t raw_adv_data[] = {
@@ -257,10 +262,16 @@ static void gatts_profile_a_event_handler(esp_gatts_cb_event_t event, esp_gatt_i
         esp_gatt_rsp_t rsp;
         memset(&rsp, 0, sizeof(esp_gatt_rsp_t));
         rsp.attr_value.handle = param->read.handle;
-        rsp.attr_value.len = 1;
+        rsp.attr_value.len = 5;
         uint8_t tmp = app_obd_get_speed();
-        printf("blue send speed is %d\n",tmp);
+        ftoi fi_tmp;
+        fi_tmp.floatValue = get_QAM_x_acc();
+        printf("blue send speed is %d,acc is %f\n",tmp,fi_tmp.floatValue);
         rsp.attr_value.value[0] = tmp;
+        rsp.attr_value.value[1] = fi_tmp.bytes[0];
+        rsp.attr_value.value[2] = fi_tmp.bytes[1];
+        rsp.attr_value.value[3] = fi_tmp.bytes[2];
+        rsp.attr_value.value[4] = fi_tmp.bytes[3];
         esp_ble_gatts_send_response(gatts_if, param->read.conn_id, param->read.trans_id,
                                     ESP_GATT_OK, &rsp);
         break;

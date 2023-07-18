@@ -86,6 +86,10 @@ struct gattc_profile_inst {
     esp_bd_addr_t remote_bda;
 };
 
+union FloatSplit {
+    float floatValue;
+    uint8_t bytes[4];
+};
 /* One gatt-based profile one app_id and one gattc_if, this array will store the gattc_if returned by ESP_GATTS_REG_EVT */
 static struct gattc_profile_inst gl_profile_tab[PROFILE_NUM] = {
     [PROFILE_A_APP_ID] = {
@@ -122,24 +126,26 @@ static void gattc_profile_event_handler(esp_gattc_cb_event_t event, esp_gatt_if_
     case ESP_GATTC_READ_CHAR_EVT:{
         uint16_t len = param->read.value_len;
         uint8_t speed = 0;
-        for (int i = 0; i < len; i++)
-        {   
-            speed = param->read.value[i];
-            printf("data is %d\n",speed);
-            if (speed >= 120)
-            {
-                uint8_t write_char_data[] = {0xAC,0x11};
-                
-                esp_ble_gattc_write_char( gattc_if,
-                                        gl_profile_tab[PROFILE_A_APP_ID].conn_id,
-                                        gl_profile_tab[PROFILE_A_APP_ID].char_handle,
-                                        sizeof(write_char_data),
-                                        write_char_data,
-                                        ESP_GATT_WRITE_TYPE_RSP,
-                                        ESP_GATT_AUTH_REQ_NONE);
-            }
+        speed = param->read.value[0];
+        union FloatSplit split;
+        printf("data is %d\n",speed);
+        if (speed >= 120)
+        {
+            uint8_t write_char_data[] = {0xAC,0x11};
             
+            esp_ble_gattc_write_char( gattc_if,
+                                    gl_profile_tab[PROFILE_A_APP_ID].conn_id,
+                                    gl_profile_tab[PROFILE_A_APP_ID].char_handle,
+                                    sizeof(write_char_data),
+                                    write_char_data,
+                                    ESP_GATT_WRITE_TYPE_RSP,
+                                    ESP_GATT_AUTH_REQ_NONE);
         }
+        for (int i = 1; i < len; i++)
+        {   
+            split.bytes[i-1] =  param->read.value[i];
+        }
+        printf("rec acc is %f\n",split.floatValue);
         break;
     }
 

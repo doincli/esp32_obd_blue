@@ -2,6 +2,9 @@
 uint8_t old_seq = 0;
 uint8_t rec_seq[100] = {0};
 ebyte_handle_t my_ebyte;
+float X_AXIS_A;
+float Y_AXIS_A;
+float Z_AXIS_A;
 
 void app_subg_init(){
 
@@ -132,9 +135,7 @@ ebyte_config_t* get_ebyte_config(){
 }
 
 void app_qam_task(){
-    float X_AXIS_A;
-    float Y_AXIS_A;
-    float Z_AXIS_A;
+
     while(1)
     {	   
         X_AXIS_A = QMA7981_read_DXM() ;
@@ -145,9 +146,14 @@ void app_qam_task(){
         vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
 }
+
 void master_init(){
     i2c_master_init();
     ESP_ERROR_CHECK(QMA7981_setMode(QMA7981_MODE_100K_cmd));	
     ESP_ERROR_CHECK(QMA7981_setAcc(QMA7981_RAG_2g_cmd));
     xTaskCreate(app_qam_task, "app_qam_task", 4096, NULL, 5, NULL);
+}
+
+float get_QAM_x_acc(){
+    return X_AXIS_A;
 }
