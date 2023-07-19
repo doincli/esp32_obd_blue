@@ -18,7 +18,7 @@ void app_qam_task()
 
 void app_master_init()
 {
-    qma7981_master_init();
+    ESP_ERROR_CHECK(qma7981_master_init());
     ESP_ERROR_CHECK(qma7981_setMode(QMA7981_MODE_100K_cmd));	
     ESP_ERROR_CHECK(qma7981_setAcc(QMA7981_RAG_2g_cmd));
     xTaskCreate(app_qam_task, "app_qam_task", 4096, NULL, 5, NULL);

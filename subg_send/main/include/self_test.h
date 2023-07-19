@@ -32,4 +32,8 @@ esp_err_t spi_test();
 /**
   * @brief  test driver is work normal
   */
-void self_test();
+esp_err_t self_test();
+
+void self_test_init();
+
+void gpio_int();
