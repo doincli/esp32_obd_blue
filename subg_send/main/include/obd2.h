@@ -45,6 +45,6 @@
 /**
   * @brief  get the obd speed
   */
-uint8_t app_obd_get_speed();
+int app_obd_get_speed();
 
 #endif // FUNC_H

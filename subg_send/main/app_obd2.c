@@ -1,8 +1,8 @@
 #include "obd2.h"
 static const char* TAG = "obd";
-uint8_t speed;
+int speed = -1;
 
-uint8_t app_obd_get_speed()
+int app_obd_get_speed()
 {
     return speed;
 }

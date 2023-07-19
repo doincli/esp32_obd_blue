@@ -29,7 +29,7 @@ esp_err_t app_ble_init();
   *  
   * @return speed 
   */
-uint8_t app_obd_get_speed();
+int app_obd_get_speed();
 
 /**
   * @brief  init obd detect and creat a task to get speed of the car 
@@ -50,4 +50,5 @@ void app_subg_send_and_recv(uint32_t ticks_to_wait,uint16_t data,uint8_t retry);
   */
 void app_subg_init();
 
+ebyte_handle_t get_ebyte();
 #endif

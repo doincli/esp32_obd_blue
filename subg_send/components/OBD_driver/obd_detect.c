@@ -51,10 +51,10 @@ obd_protocol_handle obd_create(uint8_t tx_port,uint8_t rx_port)
     return obd_handle; 
 }
 
-uint8_t obd_get_engine_speed_val(obd_protocol_handle obd_handle)
+int obd_get_engine_speed_val(obd_protocol_handle obd_handle)
 {
     uint8_t data_len_rel;
-    uint8_t engine_speed = 0;
+    int engine_speed = 0;
     
     twai_message_t tx_msg = {
         .flags = TWAI_MSG_FLAG_NONE, 

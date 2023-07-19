@@ -426,3 +426,4 @@ uint16_t Ebyte_E220x_IntOrPollTask( ebyte_status_t *ebyte_status, uint8_t *recei
 void Ebyte_E220x_SetSleep( ebyte_status_t *ebyte_status, uint8_t cmd );
 void Ebyte_E220x_Install( ebyte_config_t ebyte_config, ebyte_status_t *ebyte_status );
 void Ebyte_E220x_Unstall( ebyte_status_t *ebyte_status );
+int8_t Ebyte_E220x_GetRssiInst( ebyte_status_t *ebyte_status );

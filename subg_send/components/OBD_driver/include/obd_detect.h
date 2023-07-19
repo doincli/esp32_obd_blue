@@ -80,7 +80,7 @@ obd_protocol_handle obd_create(uint8_t tx_port,uint8_t rx_port);
   * @return the speed of obd
   * 
   */
-uint8_t obd_get_engine_speed_val(obd_protocol_handle protocol_status );
+int obd_get_engine_speed_val(obd_protocol_handle protocol_status );
 
 /**
   * @brief  delete the handle

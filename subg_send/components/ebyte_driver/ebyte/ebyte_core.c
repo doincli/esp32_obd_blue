@@ -9,10 +9,6 @@ const Ebyte_RF_t Ebyte_RF =
   Ebyte_E220x_SetSleep,
   Ebyte_E220x_SetRx,  
   Ebyte_E220x_IntOrPollTask,
+  Ebyte_E220x_GetRssiInst,
 };
-
-
-
-
-
 

@@ -263,11 +263,15 @@ static void gatts_profile_a_event_handler(esp_gatts_cb_event_t event, esp_gatt_i
         memset(&rsp, 0, sizeof(esp_gatt_rsp_t));
         rsp.attr_value.handle = param->read.handle;
         rsp.attr_value.len = 5;
-        uint8_t tmp = app_obd_get_speed();
+        int tmp = app_obd_get_speed();
         ftoi fi_tmp;
         fi_tmp.floatValue = app_get_qam_x_acc();
         ESP_LOGI(TAG, "blue send speed is %d,acc is %f\n",tmp,fi_tmp.floatValue);
-        rsp.attr_value.value[0] = tmp;
+        if(tmp == -1){
+            rsp.attr_value.value[0] = 0;
+        }else{
+            rsp.attr_value.value[0] = (uint8_t)tmp;
+        }
         rsp.attr_value.value[1] = fi_tmp.bytes[0];
         rsp.attr_value.value[2] = fi_tmp.bytes[1];
         rsp.attr_value.value[3] = fi_tmp.bytes[2];
@@ -284,7 +288,7 @@ static void gatts_profile_a_event_handler(esp_gatts_cb_event_t event, esp_gatt_i
         uint8_t number2 = param->write.value[1];  
         uint16_t combinedNumber; 
         combinedNumber = ((uint16_t)number1 << 8) | number2;
-        BaseType_t ret =ESP_OK;
+        BaseType_t ret = pdFALSE;
         if (combinedNumber == 0xac11)
         {
          ret = xQueueSend(evt_queue, &combinedNumber, 0);
@@ -293,53 +297,49 @@ static void gatts_profile_a_event_handler(esp_gatts_cb_event_t event, esp_gatt_i
         if (ret == pdPASS)
         {
             ESP_LOGI(TAG, "queue send success\n");
+            ESP_LOGI(TAG, "command is %x\n",combinedNumber);
+            ESP_LOGI(TAG, "send data is %x,Waiting num is %d,available num is %d\n",combinedNumber,uxQueueMessagesWaiting(evt_queue),uxQueueSpacesAvailable(evt_queue));
         }else if (ret == errQUEUE_FULL)
         {
             //队列满处理 可以后面添加
             ESP_LOGI(TAG, "queuefull\n");
         }
-        ESP_LOGI(TAG, "command is %x\n",combinedNumber);
-        ESP_LOGI(TAG, "send data is %x,Waiting num is %d,available num is %d\n",combinedNumber,uxQueueMessagesWaiting(evt_queue),uxQueueSpacesAvailable(evt_queue));
-        // ESP_LOGI(TAG, "command is %x\n",combinedNumber);
-
-        // ESP_LOGI(TAG, "command is %s\n",param->write.value);
-            // esp_log_buffer_hex(GATTS_TAG, param->write.value, param->write.len);
-            if (gl_profile_tab[PROFILE_A_APP_ID].descr_handle == param->write.handle && param->write.len == 2){
-                uint16_t descr_value = param->write.value[1]<<8 | param->write.value[0];
-                if (descr_value == 0x0001){
-                    if (a_property & ESP_GATT_CHAR_PROP_BIT_NOTIFY){
-                        ESP_LOGI(GATTS_TAG, "notify enable");
-                        uint8_t notify_data[15];
-                        for (int i = 0; i < sizeof(notify_data); ++i)
-                        {
-                            notify_data[i] = i%0xff;
-                        }
-                        //the size of notify_data[] need less than MTU size
-                        esp_ble_gatts_send_indicate(gatts_if, param->write.conn_id, gl_profile_tab[PROFILE_A_APP_ID].char_handle,
-                                                sizeof(notify_data), notify_data, false);
+        if (gl_profile_tab[PROFILE_A_APP_ID].descr_handle == param->write.handle && param->write.len == 2){
+            uint16_t descr_value = param->write.value[1]<<8 | param->write.value[0];
+            if (descr_value == 0x0001){
+                if (a_property & ESP_GATT_CHAR_PROP_BIT_NOTIFY){
+                    ESP_LOGI(GATTS_TAG, "notify enable");
+                    uint8_t notify_data[15];
+                    for (int i = 0; i < sizeof(notify_data); ++i)
+                    {
+                        notify_data[i] = i%0xff;
                     }
-                }else if (descr_value == 0x0002){
-                    if (a_property & ESP_GATT_CHAR_PROP_BIT_INDICATE){
-                        ESP_LOGI(GATTS_TAG, "indicate enable");
-                        uint8_t indicate_data[15];
-                        for (int i = 0; i < sizeof(indicate_data); ++i)
-                        {
-                            indicate_data[i] = i%0xff;
-                        }
-                        //the size of indicate_data[] need less than MTU size
-                        esp_ble_gatts_send_indicate(gatts_if, param->write.conn_id, gl_profile_tab[PROFILE_A_APP_ID].char_handle,
-                                                sizeof(indicate_data), indicate_data, true);
+                    //the size of notify_data[] need less than MTU size
+                    esp_ble_gatts_send_indicate(gatts_if, param->write.conn_id, gl_profile_tab[PROFILE_A_APP_ID].char_handle,
+                                            sizeof(notify_data), notify_data, false);
+                }
+            }else if (descr_value == 0x0002){
+                if (a_property & ESP_GATT_CHAR_PROP_BIT_INDICATE){
+                    ESP_LOGI(GATTS_TAG, "indicate enable");
+                    uint8_t indicate_data[15];
+                    for (int i = 0; i < sizeof(indicate_data); ++i)
+                    {
+                        indicate_data[i] = i%0xff;
                     }
+                    //the size of indicate_data[] need less than MTU size
+                    esp_ble_gatts_send_indicate(gatts_if, param->write.conn_id, gl_profile_tab[PROFILE_A_APP_ID].char_handle,
+                                            sizeof(indicate_data), indicate_data, true);
                 }
-                else if (descr_value == 0x0000){
-                    ESP_LOGI(GATTS_TAG, "notify/indicate disable ");
-                }else{
-                    ESP_LOGE(GATTS_TAG, "unknown descr value");
-                    esp_log_buffer_hex(GATTS_TAG, param->write.value, param->write.len);
-                }
-
             }
+            else if (descr_value == 0x0000){
+                ESP_LOGI(GATTS_TAG, "notify/indicate disable ");
+            }else{
+                ESP_LOGE(GATTS_TAG, "unknown descr value");
+                esp_log_buffer_hex(GATTS_TAG, param->write.value, param->write.len);
+            }
+
         }
+    }
         example_write_event_env(gatts_if, &a_prepare_write_env, param);
         break;
     }

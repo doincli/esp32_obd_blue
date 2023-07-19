@@ -33,7 +33,6 @@ ebyte_handle_t Ebyte_Init( ebyte_config_t ebyte_config )
 int Ebyte_Send( ebyte_handle_t handle, uint8_t *payload, uint8_t size, uint32_t timeout_ms )
 {
     ebyte_status_t *ebyte_status = (ebyte_status_t *)handle;
-   // printf("1.1\n");
     if( timeout_ms > 262000 )
     {
         ets_printf("Set too large timeout\n");
@@ -41,13 +40,10 @@ int Ebyte_Send( ebyte_handle_t handle, uint8_t *payload, uint8_t size, uint32_t 
     }
 
     uint32_t timeout = timeout_ms * 1000 / 15;
-   // printf("1.2\n");
     xSemaphoreTake( ebyte_status->xmutex, portMAX_DELAY );
   
     uint16_t irq_return = Ebyte_RF.Send( ebyte_status, payload, size, timeout );
-   // printf("1.3\n");
     xSemaphoreGive( ebyte_status->xmutex );
-   // printf("1.4\n");
     if((irq_return & 0x0001) ==  0x0001 ) {
         return size;
     }
@@ -69,28 +65,22 @@ int Ebyte_Send( ebyte_handle_t handle, uint8_t *payload, uint8_t size, uint32_t 
 int Ebyte_Receive( ebyte_handle_t handle, uint8_t *payload, uint32_t timeout_ms )
 {
     ebyte_status_t *ebyte_status = (ebyte_status_t *)handle;
-   // printf("2.1\n");
     if( timeout_ms > 262000 )
     {
         ets_printf("Set too large timeout\n");
         return -1;
     }
-   // printf("2.2\n");
     uint32_t timeout = timeout_ms * 1000 / 15;
     uint16_t irq_return;
 
     xSemaphoreTake( ebyte_status->xmutex, portMAX_DELAY );
-    // printf("2.3\n");
     Ebyte_RF.EnterReceiveMode( ebyte_status, timeout );
-    // printf("2.4\n");
     do {
         irq_return = Ebyte_RF.StartPollTask(ebyte_status, payload);
         vTaskDelay( 10 );
     }
     while( !irq_return );
-    // printf("2.5\n");
     xSemaphoreGive( ebyte_status->xmutex );
-   //  printf("2.6\n");
     if((irq_return & 0x0002) ==  0x0002 ) {
         return ebyte_status->recv_len;
     }
@@ -111,4 +101,13 @@ void Ebyte_DeInit( ebyte_handle_t handle )
     Ebyte_RF.Unstall(ebyte_status);
 
     free(ebyte_status);
+}
+
+
+int8_t Ebyte_getRSSI(ebyte_handle_t handle)
+{
+    ebyte_status_t *ebyte_status = (ebyte_status_t *)handle;
+    int8_t rssi = -128;
+    rssi = Ebyte_RF.GetRssi(ebyte_status);
+    return rssi;
 }

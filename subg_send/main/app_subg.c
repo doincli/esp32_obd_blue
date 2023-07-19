@@ -1,4 +1,5 @@
 #include "app.h"
+#include "self_test.h"
 
 ebyte_handle_t my_ebyte;
 static const char* TAG = "subg";
@@ -46,7 +47,7 @@ void app_subg_send_and_recv(uint32_t ticks_to_wait,uint16_t data,uint8_t retry)
     int size1 = Ebyte_Send( my_ebyte, send_buf, Frame_len, ticks_to_wait );
     ESP_LOGI(TAG, "send size is %d,seq is %d\n",size1,seq);
     while (1) {   
-       int size = Ebyte_Receive(my_ebyte, rec_seq, ticks_to_wait);
+        int size = Ebyte_Receive(my_ebyte, rec_seq, ticks_to_wait);
         ESP_LOGI(TAG, "rec seq is %d,size is %d\n",rec_seq[0],size);
         if (rec_seq[0] == seq){
             ESP_LOGI(TAG, "rec right\n");
@@ -61,4 +62,9 @@ void app_subg_send_and_recv(uint32_t ticks_to_wait,uint16_t data,uint8_t retry)
             }
         }
     }   
+}
+
+ebyte_handle_t get_ebyte()
+{
+    return my_ebyte;
 }
