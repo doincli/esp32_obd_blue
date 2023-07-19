@@ -20,8 +20,6 @@ ebyte_config_t my_ebyte_config = {
 
 void app_subg_init()
 {
-    Ebyte_FIFO_t my_fifo;
-    fifo_init(&my_fifo);
     my_ebyte = Ebyte_Init(my_ebyte_config);
 }
 
@@ -65,26 +63,7 @@ void app_subg_send_and_recv(uint32_t ticks_to_wait,uint16_t data,uint8_t retry)
     }   
 }
 
-void Ebyte_FIFO_Init(Ebyte_FIFO_t* queue)
-{
-    queue->front = -1;
-    queue->rear = -1;
-    queue->size = 0;
-}
-
-void fifo_init( Ebyte_FIFO_t *my_fifo)
-{
-    for(int i = 0; i < 2; ++i){
-        ESP_LOGI(TAG, "start: %d\n", i);
-        ets_delay_us(1000);
-    }
-
-    Ebyte_FIFO_Init(my_fifo);
-}
-
 ebyte_config_t* get_ebyte_config()
 {
     return &my_ebyte_config;
 }
-
-

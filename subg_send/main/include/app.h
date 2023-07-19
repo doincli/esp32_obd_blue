@@ -16,18 +16,6 @@ typedef struct {
 } Ebyte_FIFO_t;
 
 /**
-  * @brief  Ebyte FIFO init
-  *  
-  */
-void Ebyte_FIFO_Init(Ebyte_FIFO_t* queue);
-
-/**
-  * @brief  fifo init
-  *  
-  */
- void fifo_init( Ebyte_FIFO_t *my_fifo);
-
-/**
   * @brief  init bluetooth and create a task to transmit the common of app to the other subg
   *  
   * @return
