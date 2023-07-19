@@ -62,8 +62,3 @@ void app_subg_send_and_recv(uint32_t ticks_to_wait,uint16_t data,uint8_t retry)
         }
     }   
 }
-
-ebyte_config_t* get_ebyte_config()
-{
-    return &my_ebyte_config;
-}

@@ -47,10 +47,4 @@
   */
 uint8_t app_obd_get_speed();
 
-/**
-  * @brief  get the ebyte_config
-  */
-ebyte_config_t* get_ebyte_config();
-
-
 #endif // FUNC_H
