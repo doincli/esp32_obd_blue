@@ -1,7 +1,9 @@
 #include "esp_err.h"
 #include "obd2.h"
 #include "qam.h"
-// #include "ebyte.h"
+
+
+//#include "ebyte.h"
 /**
   * @brief  test accuracy is work normal
   *  
@@ -34,6 +36,13 @@ esp_err_t spi_test();
   */
 esp_err_t self_test();
 
+/**
+  * @brief  test  init
+  */
 void self_test_init();
 
+/**
+  * @brief  gpio init
+  */
 void gpio_int();
+

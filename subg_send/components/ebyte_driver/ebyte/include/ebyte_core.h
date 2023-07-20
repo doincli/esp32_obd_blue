@@ -12,6 +12,7 @@ typedef struct
     void   ( *EnterReceiveMode )( ebyte_status_t *ebyte_status, uint32_t timeout );  
     uint16_t   ( *StartPollTask)( ebyte_status_t *ebyte_status, uint8_t *receive_data );
     int8_t ( *GetRssi )(ebyte_status_t *ebyte_status);
+    void (*Getstatus)( ebyte_status_t *ebyte_status );
 }Ebyte_RF_t; 
 
 

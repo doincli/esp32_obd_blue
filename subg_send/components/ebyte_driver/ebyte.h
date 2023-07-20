@@ -14,3 +14,4 @@ int Ebyte_Send( ebyte_handle_t handle, uint8_t *payload, uint8_t size, uint32_t 
 int Ebyte_Receive( ebyte_handle_t handle, uint8_t *payload, uint32_t timeout_ms );
 void Ebyte_DeInit( ebyte_handle_t handle );
 int8_t Ebyte_getRSSI(ebyte_handle_t handle);
+char Ebyte_GetLoraPacketStatus(ebyte_handle_t handle );

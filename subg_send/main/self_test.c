@@ -12,11 +12,15 @@
 #include "driver/gpio.h"
 // #include "ebyte_e220x.h"
 
+extern SemaphoreHandle_t spi_test_start;
+
+
 static const char* TAG = "self_test";
-int8_t rssi;
+int8_t actual_rssi;
 static int speed;
 float data_z = 0;
 gpio_config_t io_conf;
+
 #define led_io 3
 int io_level = 0;
 
@@ -56,9 +60,9 @@ esp_err_t self_test()
     //spi test
     ret = spi_test();
     if(ret == ESP_OK){
-        ESP_LOGI(TAG,"spi test is pass, rssi is %d\n",rssi);
+        ESP_LOGI(TAG,"spi test is pass, rssi is %d\n",actual_rssi);
     }else{
-        ESP_LOGE(TAG,"spi test is fail, rssi is %d\n",rssi);
+        ESP_LOGE(TAG,"spi test is fail, rssi is %d\n",actual_rssi);
         return ESP_FAIL;
     }
     return ESP_OK;
@@ -83,10 +87,13 @@ esp_err_t can_test()
 }
 
 esp_err_t spi_test()
-{
+{   
+    
     ebyte_handle_t tmp = get_ebyte();
-    rssi = Ebyte_getRSSI(tmp);
-    if (rssi >= -120){
+    int8_t rssi_c = (int8_t)Ebyte_GetLoraPacketStatus(tmp);
+    actual_rssi = rssi_c/2;
+    ESP_LOGI(TAG,"rssi is %d\n",actual_rssi);
+    if (actual_rssi > -50){
         return ESP_OK;
     }
     return ESP_FAIL;
@@ -104,8 +111,9 @@ void gpio_int()
 
 void self_test_init()
 {
+    xSemaphoreTake(spi_test_start,portMAX_DELAY);
     esp_err_t ret = self_test();
-    //gpio_int();
+    gpio_int();
     int time1 = 1000;
     int time2 = 100;
     if (ret == ESP_OK){

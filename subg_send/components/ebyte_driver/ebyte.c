@@ -103,11 +103,19 @@ void Ebyte_DeInit( ebyte_handle_t handle )
     free(ebyte_status);
 }
 
-
 int8_t Ebyte_getRSSI(ebyte_handle_t handle)
 {
     ebyte_status_t *ebyte_status = (ebyte_status_t *)handle;
     int8_t rssi = -128;
     rssi = Ebyte_RF.GetRssi(ebyte_status);
+    return rssi;
+}
+
+char Ebyte_GetLoraPacketStatus(ebyte_handle_t handle)
+{
+    ebyte_status_t *ebyte_status = (ebyte_status_t *)handle;
+    char rssi;
+    Ebyte_RF.Getstatus(ebyte_status);
+    rssi = ebyte_status->PacketStatus.Params.LoRa.RssiPkt;
     return rssi;
 }

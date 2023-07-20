@@ -4,6 +4,8 @@
 ebyte_handle_t my_ebyte;
 static const char* TAG = "subg";
 
+SemaphoreHandle_t spi_test_start;
+
 ebyte_config_t my_ebyte_config = {
     .spi_id = EBYTE_HOST,
     .radio_mode = RADIO_MODE_LORA,
@@ -22,6 +24,7 @@ ebyte_config_t my_ebyte_config = {
 void app_subg_init()
 {
     my_ebyte = Ebyte_Init(my_ebyte_config);
+    spi_test_start = xSemaphoreCreateBinary();
 }
 
 void app_subg_send_and_recv(uint32_t ticks_to_wait,uint16_t data,uint8_t retry)
@@ -48,6 +51,7 @@ void app_subg_send_and_recv(uint32_t ticks_to_wait,uint16_t data,uint8_t retry)
     ESP_LOGI(TAG, "send size is %d,seq is %d\n",size1,seq);
     while (1) {   
         int size = Ebyte_Receive(my_ebyte, rec_seq, ticks_to_wait);
+        xSemaphoreGive(spi_test_start);
         ESP_LOGI(TAG, "rec seq is %d,size is %d\n",rec_seq[0],size);
         if (rec_seq[0] == seq){
             ESP_LOGI(TAG, "rec right\n");

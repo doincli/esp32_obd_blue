@@ -7,6 +7,7 @@
 #include "obd2.h"
 #include "app_qam.h"
 
+
 //ebyte的结构体
 typedef struct {
     uint8_t data[EBYTE_MAX_SIZE];
@@ -50,5 +51,8 @@ void app_subg_send_and_recv(uint32_t ticks_to_wait,uint16_t data,uint8_t retry);
   */
 void app_subg_init();
 
+/**
+  * @brief  get subg_hanle
+  */
 ebyte_handle_t get_ebyte();
 #endif
