@@ -55,4 +55,10 @@ void app_subg_init();
   * @brief  get subg_hanle
   */
 ebyte_handle_t get_ebyte();
+
+/**
+  * @brief  get rssi value
+  * @return the value of rssi
+  */
+int8_t get_rssi();
 #endif

@@ -110,4 +110,7 @@ float qma7981_read_DYM();
 *     - the acceleration of Z axis
 */
 float qma7981_read_DZM();
+
+esp_err_t qma7981_driver_delete (); 
+
 #endif

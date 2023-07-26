@@ -20,7 +20,7 @@ static const char* TAG = "obd_detect";
 obd_protocol_handle obd_create(uint8_t tx_port,uint8_t rx_port)
 {
     //malloc memory
-    obd_protocol_handle obd_handle = malloc(sizeof(obd_protocol_handle));
+    obd_protocol_handle obd_handle = malloc(sizeof(detect_config_t));
     obd_handle->io_port =  malloc(sizeof(obd_io));
     obd_handle->g_config = malloc(sizeof(twai_general_config_t));
     obd_handle->t_config = malloc(sizeof(twai_timing_config_t));

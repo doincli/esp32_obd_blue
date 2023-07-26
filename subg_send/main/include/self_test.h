@@ -1,8 +1,9 @@
+#ifndef SELF_TEST_H
+#define SELF_TEST_H
+
 #include "esp_err.h"
-#include "obd2.h"
-#include "qam.h"
-
-
+#include "obd_detect.h"
+#define SELF_TEST  1
 //#include "ebyte.h"
 /**
   * @brief  test accuracy is work normal
@@ -46,3 +47,13 @@ void self_test_init();
   */
 void gpio_int();
 
+/**
+  * @brief  test blue is work normal
+  *  
+  * @return
+  *     - ESP_OK: succeed
+  *     - others: fail
+  */
+esp_err_t blue_test();
+
+#endif // SELF_TEST_H

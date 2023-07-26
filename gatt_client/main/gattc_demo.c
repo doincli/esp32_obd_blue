@@ -125,27 +125,66 @@ static void gattc_profile_event_handler(esp_gattc_cb_event_t event, esp_gatt_if_
     }
     case ESP_GATTC_READ_CHAR_EVT:{
         uint16_t len = param->read.value_len;
-        uint8_t speed = 0;
-        speed = param->read.value[0];
-        union FloatSplit split;
-        printf("data is %d\n",speed);
-        if (speed >= 120)
+        ESP_LOGI(GATTC_TAG, "ESP_GATTC_READ_CHAR_EVT conn_id %d, handle is %d, if %d", p_data->connect.conn_id, p_data->read.handle,gattc_if);
+        printf("len is %d\n",len);
+        if (p_data->read.handle == 42)
         {
-            uint8_t write_char_data[] = {0xAC,0x11};
+            for (int i = 0; i < len; i++)
+            {
+                printf("data is %d, ",param->read.value[i]);
+            }
+        }else if (p_data->read.handle == 44)
+        {
+            int8_t tmp = (int8_t)param->read.value[0];
+            printf("data is %d, ",tmp);
+        }else if (p_data->read.handle == 46)
+        {
+            uint16_t combined_value = ((uint16_t)param->read.value[1] << 8) | param->read.value[0];
+            printf("data is %d, ",combined_value);
+        }else if (p_data->read.handle == 52)
+        {
+            uint8_t tmp = param->read.value[0];
+            uint8_t send_data = 0x01;
+            printf("data is %d, ",tmp);
+            if (tmp == 0x00){
+                esp_ble_gattc_write_char( gattc_if,
+                                    gl_profile_tab[PROFILE_A_APP_ID].conn_id,
+                                    p_data->read.handle,
+                                    sizeof(send_data),
+                                    &send_data,
+                                    ESP_GATT_WRITE_TYPE_RSP,
+                                    ESP_GATT_AUTH_REQ_NONE);
+                            }
+        }    
+          
+        
+        
+        
+        printf("\n");
+        
+        if (p_data->read.handle == 42)
+         {
+            uint8_t speed = param->read.value[0];
+            if (speed > 120)
+            {
+                 uint8_t write_char_data[] = {0xAC,0x11};
             
             esp_ble_gattc_write_char( gattc_if,
                                     gl_profile_tab[PROFILE_A_APP_ID].conn_id,
-                                    gl_profile_tab[PROFILE_A_APP_ID].char_handle,
+                                    p_data->read.handle+6,
                                     sizeof(write_char_data),
                                     write_char_data,
                                     ESP_GATT_WRITE_TYPE_RSP,
                                     ESP_GATT_AUTH_REQ_NONE);
-        }
-        for (int i = 1; i < len; i++)
-        {   
-            split.bytes[i-1] =  param->read.value[i];
-        }
-        printf("rec acc is %f\n",split.floatValue);
+            }
+            
+         }  
+        // }
+        // for (int i = 1; i < len; i++)
+        // {   
+        //     split.bytes[i-1] =  param->read.value[i];
+        // }
+        // printf("rec acc is %f\n",split.floatValue);
         break;
     }
 
@@ -336,6 +375,7 @@ static void gattc_profile_event_handler(esp_gattc_cb_event_t event, esp_gatt_if_
             break;
         }
         ESP_LOGI(GATTC_TAG, "write char success ");
+
         break;
     case ESP_GATTC_DISCONNECT_EVT:
         connect = false;
@@ -528,13 +568,36 @@ void app_main(void)
         ESP_LOGE(GATTC_TAG, "set local  MTU failed, error code = %x", local_mtu_ret);
     }
     
-
+    int times = 0;
     while (1)
     {
         vTaskDelay(200);
-        esp_err_t flag =  esp_ble_gattc_read_char(gl_profile_tab[PROFILE_A_APP_ID].gattc_if,
+        esp_err_t flag;
+        if (!times)
+        {
+            flag  =  esp_ble_gattc_read_char(gl_profile_tab[PROFILE_A_APP_ID].gattc_if,
                         gl_profile_tab[PROFILE_A_APP_ID].conn_id,
-                        gl_profile_tab[PROFILE_A_APP_ID].char_handle,
+                        gl_profile_tab[PROFILE_A_APP_ID].service_start_handle+12,
+                        ESP_GATT_AUTH_REQ_NONE        );
+                        printf("times is %d\n",times);
+            times++;
+        }
+        
+        
+
+         flag =  esp_ble_gattc_read_char(gl_profile_tab[PROFILE_A_APP_ID].gattc_if,
+                        gl_profile_tab[PROFILE_A_APP_ID].conn_id,
+                        gl_profile_tab[PROFILE_A_APP_ID].service_start_handle+2,
+                        ESP_GATT_AUTH_REQ_NONE        );
+       // printf("hanlde is %d\n",gl_profile_tab[PROFILE_A_APP_ID].service_start_handle+2);
+        flag =  esp_ble_gattc_read_char(gl_profile_tab[PROFILE_A_APP_ID].gattc_if,
+                        gl_profile_tab[PROFILE_A_APP_ID].conn_id,
+                        gl_profile_tab[PROFILE_A_APP_ID].service_start_handle+4,
+                        ESP_GATT_AUTH_REQ_NONE        );
+
+         flag =  esp_ble_gattc_read_char(gl_profile_tab[PROFILE_A_APP_ID].gattc_if,
+                        gl_profile_tab[PROFILE_A_APP_ID].conn_id,
+                        gl_profile_tab[PROFILE_A_APP_ID].service_start_handle+6,
                         ESP_GATT_AUTH_REQ_NONE        );
         if (flag != ESP_OK)
         {

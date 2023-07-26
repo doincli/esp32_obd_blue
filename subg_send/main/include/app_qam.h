@@ -15,4 +15,10 @@ void app_master_init();
   */
 float app_get_qam_x_acc();
 
+/**
+  * @brief  get accuracy of z axis
+  * 
+  * @return accuracy of z axis
+  */
+float app_get_qam_z_acc();
 #endif // APP_QAM_H

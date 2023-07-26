@@ -106,3 +106,8 @@ esp_err_t qma7981_setAcc(uint8_t cmd)
 {
     return  qma7981_register_write_byte(QMA7981_RANGE_ADDR, cmd);
 }
+
+esp_err_t qma7981_driver_delete()
+{
+   return  i2c_driver_delete(I2C_MASTER_NUM);  
+}

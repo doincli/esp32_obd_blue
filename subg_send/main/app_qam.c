@@ -28,3 +28,9 @@ float app_get_qam_x_acc()
 {
     return x_accuracy;
 }
+
+float app_get_qam_z_acc()
+{
+    return z_accuracy;
+}
+

@@ -1,29 +1,100 @@
-# 相关配置
+# OBD + GATTS + RADIO
 
-1.打开蓝牙4.2
+## 环境准备
 
-![image-20230713191936549](https://image-1302263000.cos.ap-nanjing.myqcloud.com/img/image-20230713191936549.png)
+开发板芯片型号:esp32c6
 
-2.关闭5.0 打开4.2
+开发工具： esp-idf/master
 
-![image-20230713191920711](https://image-1302263000.cos.ap-nanjing.myqcloud.com/img/image-20230713191920711.png)
+其它配置
 
-![image-20230713191926993](https://image-1302263000.cos.ap-nanjing.myqcloud.com/img/image-20230713191926993.png)
+打开蓝牙,并且蓝牙配置选择为4.2 features
 
-3.关闭开门狗
+![image-20230711104242940](https://image-1302263000.cos.ap-nanjing.myqcloud.com/img/image-20230711104242940.png)
 
-![image-20230713191954846](https://image-1302263000.cos.ap-nanjing.myqcloud.com/img/image-20230713191954846.png)
+![image-20230711104426378](https://image-1302263000.cos.ap-nanjing.myqcloud.com/img/image-20230711104426378.png)
 
-## 引脚以及原理图
 
-![image-20230713192120336](https://image-1302263000.cos.ap-nanjing.myqcloud.com/img/image-20230713192120336.png)
 
-![image-20230713192133329](https://image-1302263000.cos.ap-nanjing.myqcloud.com/img/image-20230713192133329.png)
+具体配置在相应的sdkconfig中
 
-![image-20230713192155571](https://image-1302263000.cos.ap-nanjing.myqcloud.com/img/image-20230713192155571.png)
+## 整体思路：
 
-## 问题
+一共使用3块ESP32 （以下都用简称了）
 
-发出数据后，ebyte的状态一直是A8a8
+第一块ESP32 称为ESP_1  用于OBD检测 通过GATTS发送给第二块ESP32 通过射频发送给第三块ESP32
 
-![image-20230713192037820](https://image-1302263000.cos.ap-nanjing.myqcloud.com/img/image-20230713192037820.png)
+第二块ESP32 称为ESP_2  用于GATTS传输，可以认为是手机终端
+
+第三块ESP32称为ESP_3 用于射频模块  可以认为是车库等终端
+
+
+
+ESP_1用于OBD检测，并且实时将数据发送给另一块ESP_2（可以当成手机端）
+
+当车速大于120km/h时候，手机端的ESP_2发送一个命令 我设置的是AC11
+
+用于检测的ESP_1收到命令后通过射频传输给ESP_3（可以当做车库等终端）。
+
+
+
+## 版本说明
+
+1. 移植了新的驱动  芯片是espc6
+
+
+
+## 相关程序
+
+gatt_client 是ESP_2的程序
+
+subg_radio_send是ESP_1的程序（就是中间的主机，最重要的那个板子）
+
+subg_radio_rev是ESP_3的程序
+
+
+
+## ESP_1整体思路：
+
+分为三个线程
+
+一个线程不断从OBD里面读取车速数据，
+
+一个线程做蓝牙的数据接收和传输
+
+一个线程做射频的发送和接收
+
+
+
+中间使用接口函数
+
+
+
+目录的整体结构
+
+![image-20230706160117860](https://image-1302263000.cos.ap-nanjing.myqcloud.com/img/image-20230706160117860.png)
+
+
+
+
+
+## 实验效果
+
+### obd检测端
+
+![image-20230705105231846](https://image-1302263000.cos.ap-nanjing.myqcloud.com/img/image-20230705105231846.png)
+
+
+
+### 手机端
+
+![image-20230703173948712](https://image-1302263000.cos.ap-nanjing.myqcloud.com/img/image-20230703173948712.png)
+
+
+
+### 远程通信的接收端
+
+远程接收不丢包了
+
+![image-20230705105203869](https://image-1302263000.cos.ap-nanjing.myqcloud.com/img/image-20230705105203869.png)
+

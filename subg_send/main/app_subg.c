@@ -3,7 +3,7 @@
 
 ebyte_handle_t my_ebyte;
 static const char* TAG = "subg";
-
+int8_t detect_rssi; 
 SemaphoreHandle_t spi_test_start;
 
 ebyte_config_t my_ebyte_config = {
@@ -24,7 +24,6 @@ ebyte_config_t my_ebyte_config = {
 void app_subg_init()
 {
     my_ebyte = Ebyte_Init(my_ebyte_config);
-    spi_test_start = xSemaphoreCreateBinary();
 }
 
 void app_subg_send_and_recv(uint32_t ticks_to_wait,uint16_t data,uint8_t retry)
@@ -51,7 +50,8 @@ void app_subg_send_and_recv(uint32_t ticks_to_wait,uint16_t data,uint8_t retry)
     ESP_LOGI(TAG, "send size is %d,seq is %d\n",size1,seq);
     while (1) {   
         int size = Ebyte_Receive(my_ebyte, rec_seq, ticks_to_wait);
-        xSemaphoreGive(spi_test_start);
+        int8_t rssi_c = (int8_t)Ebyte_GetLoraPacketStatus(my_ebyte);
+        detect_rssi = rssi_c/2;
         ESP_LOGI(TAG, "rec seq is %d,size is %d\n",rec_seq[0],size);
         if (rec_seq[0] == seq){
             ESP_LOGI(TAG, "rec right\n");
@@ -71,4 +71,8 @@ void app_subg_send_and_recv(uint32_t ticks_to_wait,uint16_t data,uint8_t retry)
 ebyte_handle_t get_ebyte()
 {
     return my_ebyte;
+}
+
+int8_t get_rssi(){
+    return detect_rssi;
 }
