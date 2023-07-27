@@ -5,5 +5,6 @@ idf_component_register(
                             app_subg.c
                             app_qam.c
                             self_test.c
+                            app_cmt2300.c
                     INCLUDE_DIRS "include"
 )

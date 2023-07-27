@@ -673,14 +673,18 @@ esp_err_t blue_init()
 void app_ble_evt_task(void* arg)
 {
     QueueHandle_t evt_queue = (QueueHandle_t)arg;
-    uint16_t evt = 0;
+    uint16_t evt = 0x1234;
     uint8_t retry = 3;
     while (1) {
         BaseType_t ret = xQueueReceive(evt_queue, &evt, portMAX_DELAY);
         if (ret == pdPASS){
             ESP_LOGI(GATTS_TABLE_TAG, "rec is success(evt: 0x%04x), call subG send and receive\n", evt);
             // call subG send and receive API
-            app_subg_send_and_recv(1000,evt,retry);
+            #ifdef SUBG_CMT2300
+                app_subg_cmt2300_send_and_recv(1000,evt,retry);
+            #else
+                app_subg_send_and_recv(1000,evt,retry);
+            #endif
         }
     }
 }

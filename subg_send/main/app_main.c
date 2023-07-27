@@ -15,17 +15,25 @@ void app_main(void)
 {   
     //self_test
     #ifdef SELF_TEST
-        app_subg_init();
-        self_test_init();
-        ESP_LOGI(TAG, "self test done\n");
+        #ifdef SUBG_CMT2300
+            app_subg_cmt2300_init();
+        #else
+            app_subg_init();
+        #endif
+            self_test_init();
+            ESP_LOGI(TAG, "self test done\n");
     #else
-        app_subg_init();
-        ESP_LOGI(TAG, "app_subg_init");
-        app_ble_init();
-        ESP_LOGI(TAG, "app_ble_init");
-        app_obd_init();
-        ESP_LOGI(TAG, "init done\n");
-        app_master_init();
+        #ifdef SUBG_CMT2300
+            app_subg_cmt2300_init();
+        #else
+            app_subg_init();
+        #endif
+            ESP_LOGI(TAG, "app_subg_init");
+            app_ble_init();
+            ESP_LOGI(TAG, "app_ble_init");
+            app_obd_init();
+            ESP_LOGI(TAG, "init done\n");
+            app_master_init();
     #endif
 }
 

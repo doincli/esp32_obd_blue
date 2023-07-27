@@ -11,13 +11,10 @@
 #include "freertos/queue.h"
 #include "driver/gpio.h"
 
-extern SemaphoreHandle_t spi_test_start;
-
 static const char* TAG = "self_test";
 int8_t actual_rssi;
 static int speed;
 float data_z = 0;
-gpio_config_t io_conf;
 
 #define led_io 3
 int io_level = 0;
@@ -68,7 +65,7 @@ esp_err_t self_test()
     if(ret == ESP_OK){
         ESP_LOGI(TAG,"blue test is pass\n");
     }
-       return ESP_OK;
+    return ESP_OK;
 }
 
 esp_err_t accuracy_test()
@@ -99,15 +96,32 @@ esp_err_t can_test()
 
 esp_err_t spi_test()
 {   
-    uint16_t data = 20;
-    app_subg_send_and_recv(pdMS_TO_TICKS(20000),data,3);
-    ebyte_handle_t tmp = get_ebyte();
-    int8_t rssi_c = (int8_t)Ebyte_GetLoraPacketStatus(tmp);
-    actual_rssi = rssi_c/2;
-    if (actual_rssi > -50){
-        return ESP_OK;
-    }
-    return ESP_FAIL;
+    
+    #ifdef SUBG_CMT2300
+        uint8_t send_buf[3] = {0};
+        int8_t seq = rand() % 256;
+        send_buf[Frame_len-1] = seq;
+        void * subg_handle = get_subg_handle();
+        cmt2300_send_data(subg_handle, send_buf, Frame_len);
+        int rssi = 0;
+        uint8_t rec_seq[100] = {0};
+        cmt2300_recv_data(subg_handle, rec_seq, &rssi, pdMS_TO_TICKS(5000));
+        printf("rssi is %d\n",rssi);
+        if(rssi > -128){
+            return ESP_OK;
+        }
+        return ESP_FAIL;
+    #else
+        uint16_t data = 20;
+        app_subg_send_and_recv(pdMS_TO_TICKS(20000),data,3);
+        ebyte_handle_t tmp = get_ebyte();
+        int8_t rssi_c = (int8_t)Ebyte_GetLoraPacketStatus(tmp);
+        actual_rssi = rssi_c/2;
+        if (actual_rssi > -50){
+            return ESP_OK;
+        }
+        return ESP_FAIL;
+    #endif
 }
 
 esp_err_t blue_test()
@@ -122,7 +136,8 @@ esp_err_t blue_test()
 }
 
 void gpio_int()
-{
+{   
+    gpio_config_t io_conf;
     io_conf.intr_type = GPIO_INTR_DISABLE;
     io_conf.mode = GPIO_MODE_OUTPUT;
     io_conf.pin_bit_mask = (1ULL << led_io);

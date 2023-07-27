@@ -3,7 +3,7 @@
 
 #include "esp_err.h"
 #include "obd_detect.h"
-#define SELF_TEST  1
+// #define SELF_TEST  1
 //#include "ebyte.h"
 /**
   * @brief  test accuracy is work normal
